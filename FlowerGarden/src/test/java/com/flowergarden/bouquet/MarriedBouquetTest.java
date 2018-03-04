@@ -1,11 +1,15 @@
 package com.flowergarden.bouquet;
 
 import com.flowergarden.flowers.Chamomile;
+import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.flowers.Rose;
 import com.flowergarden.properties.FreshnessInteger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Yevheniia Zubrych on 04.03.2018.
@@ -34,11 +38,30 @@ public class MarriedBouquetTest {
     }
 
     @Test
-    public void searchFlowersByLength() throws Exception {
+    public void searchFlowersByLengthEmptyResultTest() throws Exception {
+        int start = 70;
+        int end = 100;
+        List<GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start,end));
+        Assert.assertEquals(0, searchResult.size());
     }
 
     @Test
-    public void sortByFreshness() throws Exception {
+    public void searchFlowersByLengthSizeCheckingTest() throws Exception {
+        int start = 40;
+        int end = 50;
+        List<GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start,end));
+        Assert.assertEquals(2,searchResult.size());
+    }
+
+    @Test
+    public void lengthOfEachSearchElementShouldBeBetweenStartAndEndTest() throws Exception {
+        int start = 40;
+        int end = 50;
+        List<GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start,end));
+        for (GeneralFlower flower:searchResult) {
+            int flowerLength = flower.getLength();
+            Assert.assertTrue(start <= flowerLength && flowerLength <= end);
+        }
     }
 
 }
