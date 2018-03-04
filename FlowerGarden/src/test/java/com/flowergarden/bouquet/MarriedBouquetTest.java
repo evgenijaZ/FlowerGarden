@@ -41,7 +41,7 @@ public class MarriedBouquetTest {
     public void searchFlowersByLengthEmptyResultTest() throws Exception {
         int start = 70;
         int end = 100;
-        List<GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start,end));
+        List <GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start, end));
         Assert.assertEquals(0, searchResult.size());
     }
 
@@ -49,19 +49,26 @@ public class MarriedBouquetTest {
     public void searchFlowersByLengthSizeCheckingTest() throws Exception {
         int start = 40;
         int end = 50;
-        List<GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start,end));
-        Assert.assertEquals(2,searchResult.size());
+        List <GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start, end));
+        Assert.assertEquals(2, searchResult.size());
     }
 
     @Test
     public void lengthOfEachSearchElementShouldBeBetweenStartAndEndTest() throws Exception {
         int start = 40;
         int end = 50;
-        List<GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start,end));
-        for (GeneralFlower flower:searchResult) {
+        List <GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(start, end));
+        for (GeneralFlower flower : searchResult) {
             int flowerLength = flower.getLength();
             Assert.assertTrue(start <= flowerLength && flowerLength <= end);
         }
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void sortByFreshnessNullPointerTest() throws Exception {
+        bouquet = null;
+        bouquet.sortByFreshness();
     }
 
 }
