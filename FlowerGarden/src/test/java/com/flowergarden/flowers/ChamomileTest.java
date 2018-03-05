@@ -14,19 +14,22 @@ public class ChamomileTest {
 
     @Before
     public void init() {
+        //Given
         chamomile = new Chamomile(2, 20, 5, new FreshnessInteger(5));
     }
 
     @Test
-    public void getPetalWhenItsCountIsMoreThanOneTest() throws Exception {
+    public void testGettingPetal() throws Exception {
         Assert.assertEquals(true, chamomile.getPetal());
     }
 
     @Test
-    public void getPetalWhenItsCountIsLessThanOneTest() throws Exception {
+    public void testGettingTheLastPetal() throws Exception {
+        //When
         chamomile.getPetal();
         chamomile.getPetal();
-        boolean petalObtained = chamomile.getPetal();
-        Assert.assertEquals(false, petalObtained);
+        boolean petalIsObtained = chamomile.getPetal();
+        //Then
+        Assert.assertEquals(false, petalIsObtained);
     }
 }
