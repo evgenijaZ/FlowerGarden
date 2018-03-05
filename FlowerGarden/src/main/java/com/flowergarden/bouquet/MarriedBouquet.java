@@ -50,4 +50,8 @@ public class MarriedBouquet implements Bouquet <GeneralFlower> {
     public void setAssembledPrice(float price) {
         assemblePrice = price;
     }
+
+    public float getAssemblePrice() {
+        return assemblePrice;
+    }
 }

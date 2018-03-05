@@ -20,7 +20,6 @@ public class MarriedBouquetTest {
 
     private int chamomilePrice = 15;
     private int rosePrice = 35;
-    private int assembledPrice = 150;
 
     @Before
     public void initBouquet() {
@@ -28,12 +27,11 @@ public class MarriedBouquetTest {
         bouquet.addFlower(new Chamomile(12, 25, chamomilePrice, new FreshnessInteger(9)));
         bouquet.addFlower(new Rose(true, 50, rosePrice, new FreshnessInteger(10)));
         bouquet.addFlower(new Rose(false, 45, rosePrice, new FreshnessInteger(8)));
-        bouquet.setAssembledPrice(assembledPrice);
     }
 
     @Test
     public void getPriceTest() throws Exception {
-        int expectedPrice = chamomilePrice + 2 * rosePrice + assembledPrice;
+        float expectedPrice = chamomilePrice + 2 * rosePrice + bouquet.getAssemblePrice();
         Assert.assertEquals(expectedPrice, bouquet.getPrice(), 0.001);
     }
 
