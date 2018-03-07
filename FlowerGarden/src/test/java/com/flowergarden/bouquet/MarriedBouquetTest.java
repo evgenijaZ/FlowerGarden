@@ -3,7 +3,6 @@ package com.flowergarden.bouquet;
 import com.flowergarden.flowers.Chamomile;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.flowers.Rose;
-import com.flowergarden.flowers.Tulip;
 import com.flowergarden.properties.FreshnessInteger;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,27 +11,47 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 /**
  * @author Yevheniia Zubrych on 04.03.2018.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class MarriedBouquetTest {
 
     private MarriedBouquet bouquet;
-    private int chamomilePrice = 15;
-    private int rosePrice = 35;
+    private float chamomilePrice = 15f;
+    private float rosePrice = 35f;
+    @Mock
+    private Chamomile chamomile;
+    @Mock
+    private Rose roseWithSpikes;
+    @Mock
+    private Rose roseWithoutSpikes;
 
     @Before
     public void initBouquet() {
         //Given
         bouquet = new MarriedBouquet();
-        bouquet.addFlower(new Chamomile(12, 25, chamomilePrice, new FreshnessInteger(9)));
-        bouquet.addFlower(new Rose(true, 50, rosePrice, new FreshnessInteger(10)));
-        bouquet.addFlower(new Rose(false, 45, rosePrice, new FreshnessInteger(8)));
+
+        // when
+        when(chamomile.getPrice()).thenReturn(chamomilePrice);
+        when(chamomile.getLength()).thenReturn(25);
+
+        // when(roseWithSpikes.getSpike()).thenReturn(true);
+        when(roseWithSpikes.getLength()).thenReturn(50);
+        when(roseWithSpikes.getPrice()).thenReturn(rosePrice);
+
+        // when(roseWithoutSpikes.getSpike()).thenReturn(false);
+        when(roseWithoutSpikes.getLength()).thenReturn(45);
+        when(roseWithoutSpikes.getPrice()).thenReturn(rosePrice);
+
+        bouquet.addFlower(chamomile);
+        bouquet.addFlower(roseWithSpikes);
+        bouquet.addFlower(roseWithoutSpikes);
     }
 
     @Test
@@ -74,17 +93,10 @@ public class MarriedBouquetTest {
         }
     }
 
-
-    @Test(expected = NullPointerException.class)
-    public void testHandlingNullPointerException() throws Exception {
-        //Given
-        bouquet = null;
+    public void testWrongSearchParameters() throws Exception {
         //When
-        bouquet.sortByFreshness();
+        List <GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(1000, -10));
+        //Then
+        Assert.assertEquals(0, searchResult.size());
     }
-
-    @Test
-    public void testFlowerList(){
-    }
-
 }
