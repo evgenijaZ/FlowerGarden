@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -31,6 +32,12 @@ public class MarriedBouquetTest {
     private Rose roseWithSpikes;
     @Mock
     private Rose roseWithoutSpikes;
+    @Mock
+    private FreshnessInteger chamomileFreshness;
+    @Mock
+    private FreshnessInteger spikeRoseFreshness;
+    @Mock
+    private FreshnessInteger roseFreshness;
 
     @Before
     public void initBouquet() {
@@ -41,13 +48,28 @@ public class MarriedBouquetTest {
         when(chamomile.getPrice()).thenReturn(chamomilePrice);
         when(chamomile.getLength()).thenReturn(25);
 
-        // when(roseWithSpikes.getSpike()).thenReturn(true);
+        // when (roseWithSpikes.getSpike()).thenReturn(true);
         when(roseWithSpikes.getLength()).thenReturn(50);
         when(roseWithSpikes.getPrice()).thenReturn(rosePrice);
 
-        // when(roseWithoutSpikes.getSpike()).thenReturn(false);
+        // when (roseWithoutSpikes.getSpike()).thenReturn(false);
         when(roseWithoutSpikes.getLength()).thenReturn(45);
         when(roseWithoutSpikes.getPrice()).thenReturn(rosePrice);
+
+        when(chamomileFreshness.getFreshness()).thenReturn(10);
+        when(spikeRoseFreshness.getFreshness()).thenReturn(12);
+        when(roseFreshness.getFreshness()).thenReturn(8);
+
+
+        when(chamomile.getFreshness()).thenReturn(chamomileFreshness);
+        when(roseWithSpikes.getFreshness()).thenReturn(roseFreshness);
+        when(roseWithoutSpikes.getFreshness()).thenReturn(spikeRoseFreshness);
+
+
+        //when(chamomile.compareTo(any(GeneralFlower.class))).thenCallRealMethod();
+        when(roseWithSpikes.compareTo(any(GeneralFlower.class))).thenCallRealMethod();
+        when(roseWithoutSpikes.compareTo(any(GeneralFlower.class))).thenCallRealMethod();
+
 
         bouquet.addFlower(chamomile);
         bouquet.addFlower(roseWithSpikes);
@@ -98,5 +120,10 @@ public class MarriedBouquetTest {
         List <GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(1000, -10));
         //Then
         Assert.assertEquals(0, searchResult.size());
+    }
+
+    @Test
+    public void testSortByFreshness() {
+        bouquet.sortByFreshness();
     }
 }
