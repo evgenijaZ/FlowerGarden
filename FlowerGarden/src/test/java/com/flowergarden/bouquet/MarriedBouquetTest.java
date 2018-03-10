@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +45,6 @@ public class MarriedBouquetTest {
         //Given
         bouquet = new MarriedBouquet();
 
-        // when
         when(chamomile.getPrice()).thenReturn(chamomilePrice);
         when(chamomile.getLength()).thenReturn(25);
 
@@ -115,7 +115,8 @@ public class MarriedBouquetTest {
         }
     }
 
-    public void testWrongSearchParameters() throws Exception {
+    @Test
+    public void testWrongSearchParameters() {
         //When
         List <GeneralFlower> searchResult = new ArrayList <>(bouquet.searchFlowersByLength(1000, -10));
         //Then
@@ -123,7 +124,14 @@ public class MarriedBouquetTest {
     }
 
     @Test
-    public void testSortByFreshness() {
+    public void testSortingByFreshness() {
+        //When
         bouquet.sortByFreshness();
+        List <GeneralFlower> sortingResult = new ArrayList <>(bouquet.getFlowers());
+        //Then
+        Assert.assertEquals(roseWithSpikes.getFreshness(), sortingResult.get(0).getFreshness());
+        Assert.assertEquals(chamomile.getFreshness(), sortingResult.get(1).getFreshness());
+        Assert.assertEquals(roseWithoutSpikes.getFreshness(), sortingResult.get(2).getFreshness());
+
     }
 }
