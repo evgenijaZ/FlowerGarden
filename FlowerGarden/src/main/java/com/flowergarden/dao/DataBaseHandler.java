@@ -1,5 +1,7 @@
 package com.flowergarden.dao;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 
 /**
@@ -17,12 +19,13 @@ public class DataBaseHandler {
     }
 
     public Connection openConnection() {
-        String url = "jdbc:sqlite:" + pathToDB;
-        try (Connection connection = DriverManager.getConnection(url)) {
-            Statement statement = connection.createStatement();
-        } catch (SQLException e) {
+        File file = new File(pathToDB);
+        try {
+            return DriverManager.getConnection("jdbc:sqlite:" + file.getCanonicalFile().toURI());
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -37,19 +40,22 @@ public class DataBaseHandler {
 
     private void execute(String query) {
         try (Connection connection = openConnection()) {
-            Statement statement = connection.createStatement();
-            statement.execute(query);
-            closeConnection(connection);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                statement.execute(query);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
-    public ResultSet executeQuery(String query) throws SQLException {
-        try (Connection connection = openConnection()) {
-            Statement statement = connection.createStatement();
-            return statement.executeQuery(query);
+    public ResultSet executeQuery(String query) {
+        try {
+            Connection connection = openConnection();
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                return statement.executeQuery(query);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
