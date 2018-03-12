@@ -1,5 +1,6 @@
 package com.flowergarden.dao;
 
+import com.flowergarden.bouquet.GeneralBouquet;
 import com.flowergarden.bouquet.MarriedBouquet;
 
 import java.sql.ResultSet;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * @author Yevheniia Zubrych on 12.03.2018.
  */
-public class BouquetDAO extends AbstractDAO <MarriedBouquet, Integer> {
+public class BouquetDAO extends AbstractDAO<GeneralBouquet,Integer> {
     private DataBaseHandler handler;
 
     public BouquetDAO(DataBaseHandler handler) {
@@ -22,8 +23,8 @@ public class BouquetDAO extends AbstractDAO <MarriedBouquet, Integer> {
     }
 
     @Override
-    public List <MarriedBouquet> getAll() {
-        List <MarriedBouquet> bouquets = new ArrayList <>();
+    public List <GeneralBouquet> getAll() {
+        List <GeneralBouquet> bouquets = new ArrayList <>();
         String query = "SELECT * FROM `bouquet`";
         ResultSet resultSet = null;
         try {
@@ -33,13 +34,13 @@ public class BouquetDAO extends AbstractDAO <MarriedBouquet, Integer> {
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
                     int assembledPrice = resultSet.getInt("assemble_price");
-                    MarriedBouquet bouquet = null;
                     if (name.equals("married")) {
-                        bouquet = new MarriedBouquet();
+                        MarriedBouquet bouquet = new MarriedBouquet();
+                        bouquet.setId(id);
                         bouquet.setAssembledPrice(assembledPrice);
-                    }
-                    if (bouquet != null)
                         bouquets.add(bouquet);
+                    } else
+                        throw new RuntimeException("Cannot get" + name + " bouquet");
                 }
                 return bouquets;
             }
@@ -50,22 +51,22 @@ public class BouquetDAO extends AbstractDAO <MarriedBouquet, Integer> {
     }
 
     @Override
-    public MarriedBouquet update(MarriedBouquet entity) {
+    public GeneralBouquet update(GeneralBouquet entity) {
         return null;
     }
 
     @Override
-    public MarriedBouquet getById(Integer id) {
+    public GeneralBouquet getById(Integer id) {
         return null;
     }
 
     @Override
-    public boolean delete(MarriedBouquet entity) {
+    public boolean delete(GeneralBouquet entity) {
         return false;
     }
 
     @Override
-    public boolean create(MarriedBouquet entity) {
+    public boolean create(GeneralBouquet entity) {
         return false;
     }
 }
