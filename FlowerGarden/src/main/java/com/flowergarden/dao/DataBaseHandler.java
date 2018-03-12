@@ -61,4 +61,27 @@ public class DataBaseHandler {
         }
         return null;
     }
+
+
+
+    public PreparedStatement getPrepareStatement(Connection connection, String sql) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return preparedStatement;
+    }
+
+
+    public void closePrepareStatement(PreparedStatement preparedStatement) {
+        if (preparedStatement != null) {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
