@@ -11,9 +11,11 @@ public abstract class AbstractDAO<E, K> {
 
     public abstract boolean update(E entity);
 
-    public abstract E getById(K id);
+    public abstract E getByKey(K key);
 
     public abstract boolean delete(E entity);
+
+    public abstract boolean deleteByKey(K key);
 
     public abstract boolean create(E entity);
 

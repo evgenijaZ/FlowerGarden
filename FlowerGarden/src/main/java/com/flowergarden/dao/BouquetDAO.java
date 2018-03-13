@@ -54,7 +54,7 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
     }
 
     @Override
-    public GeneralBouquet getById(Integer id) {
+    public GeneralBouquet getByKey(Integer id) {
         final String query = "SELECT * FROM `bouquet` WHERE `id`=" + id;
         List <GeneralBouquet> bouquets;
         GeneralBouquet bouquet = null;
@@ -76,6 +76,12 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
     @Override
     public boolean delete(GeneralBouquet entity) {
         final String query = "DELETE FROM `bouquet` WHERE `id`=" + entity.getId();
+        return handler.execute(query);
+    }
+
+    @Override
+    public boolean deleteByKey(Integer id) {
+        final String query = "DELETE FROM `bouquet` WHERE `id`=" + id;
         return handler.execute(query);
     }
 
