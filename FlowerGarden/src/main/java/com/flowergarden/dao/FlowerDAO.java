@@ -8,6 +8,17 @@ import java.util.List;
  * @author Yevheniia Zubrych on 13.03.2018.
  */
 public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
+
+    private DataBaseHandler handler;
+
+    public FlowerDAO(DataBaseHandler handler) {
+        this.handler = handler;
+    }
+
+    public FlowerDAO() {
+        this.handler = new DataBaseHandler();
+    }
+
     @Override
     public List<GeneralFlower> getAll() {
         return null;
