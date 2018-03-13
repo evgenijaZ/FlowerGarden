@@ -8,6 +8,8 @@ public class GeneralFlower implements Flower <Integer>, Comparable <GeneralFlowe
 
     private int id;
 
+    private int bouquetId;
+
     FreshnessInteger freshness;
 
     @XmlElement
@@ -47,5 +49,13 @@ public class GeneralFlower implements Flower <Integer>, Comparable <GeneralFlowe
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getBouquetId() {
+        return bouquetId;
+    }
+
+    public void setBouquetId(int bouquetId) {
+        this.bouquetId = bouquetId;
     }
 }
