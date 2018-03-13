@@ -38,15 +38,16 @@ public class DataBaseHandler {
             }
     }
 
-    private void execute(String query) {
+    public boolean execute(String query) {
         try (Connection connection = openConnection()) {
             if (connection != null) {
                 Statement statement = connection.createStatement();
-                statement.execute(query);
+                return statement.execute(query);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public ResultSet executeQuery(String query) {

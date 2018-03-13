@@ -1,6 +1,5 @@
 package com.flowergarden.dao;
 
-import com.flowergarden.bouquet.Bouquet;
 import com.flowergarden.bouquet.GeneralBouquet;
 import com.flowergarden.bouquet.MarriedBouquet;
 
@@ -25,9 +24,9 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
 
     @Override
     public List <GeneralBouquet> getAll() {
-        List <GeneralBouquet> bouquets = new ArrayList <>();
-        String query = "SELECT * FROM `bouquet`";
-        ResultSet resultSet = null;
+        List <GeneralBouquet> bouquets = null;
+        final String query = "SELECT * FROM `bouquet`";
+        ResultSet resultSet;
         try {
             resultSet = handler.executeQuery(query);
             if (resultSet != null) {
@@ -37,41 +36,61 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return bouquets;
     }
 
     @Override
-    public GeneralBouquet update(GeneralBouquet entity) {
-        return null;
+    public boolean update(GeneralBouquet entity) {
+        String query;
+        int id = entity.getId();
+        if (entity.getClass().equals(MarriedBouquet.class)) {
+            float assemblePrice = ((MarriedBouquet) entity).getAssemblePrice();
+            query = String.format("UPDATE `bouquet` SET `name` = `%s`, `assemble_price`= '%5.2f' WHERE `id`='%d'", "married", assemblePrice, id);
+
+        } else {
+            throw new RuntimeException("This type of bouquet is not supported :" + entity.getClass().getSimpleName());
+        }
+        return handler.execute(query);
     }
 
     @Override
     public GeneralBouquet getById(Integer id) {
-        String query = "SELECT * FROM `bouquet` WHERE `id`=" + id;
+        final String query = "SELECT * FROM `bouquet` WHERE `id`=" + id;
         List <GeneralBouquet> bouquets;
-        ResultSet resultSet = null;
+        GeneralBouquet bouquet = null;
+        ResultSet resultSet;
         try {
             resultSet = handler.executeQuery(query);
             if (resultSet != null) {
                 bouquets = parseResultSet(resultSet);
                 if (bouquets.size() == 1)
-                    return bouquets.get(0);
+                    bouquet = bouquets.get(0);
                 else throw new RuntimeException("Too many results");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return bouquet;
     }
 
     @Override
     public boolean delete(GeneralBouquet entity) {
-        return false;
+        final String query = "DELETE FROM `bouquet` WHERE `id`=" + entity.getId();
+        return handler.execute(query);
     }
 
     @Override
     public boolean create(GeneralBouquet entity) {
-        return false;
+        String query;
+        int id = entity.getId();
+        if (entity.getClass().equals(MarriedBouquet.class)) {
+            float assemblePrice = ((MarriedBouquet) entity).getAssemblePrice();
+            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `assemble_price`) VALUES ('%d', '%s', '%5.2f')", id, "married", assemblePrice);
+        } else {
+            query = String.format("INSERT INTO`bouquet` (`id`, `name`) VALUES ('%d', '%s')", id, "general");
+           //throw new RuntimeException("This type of bouquet is not supported :"+entity.getClass().getSimpleName());
+        }
+        return handler.execute(query);
     }
 
     private List <GeneralBouquet> parseResultSet(ResultSet resultSet) throws SQLException {
@@ -79,7 +98,7 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String name = resultSet.getString("name");
-            int assembledPrice = resultSet.getInt("assemble_price");
+            float assembledPrice = resultSet.getInt("assemble_price");
             if (name.equals("married")) {
                 MarriedBouquet bouquet = new MarriedBouquet();
                 bouquet.setId(id);
