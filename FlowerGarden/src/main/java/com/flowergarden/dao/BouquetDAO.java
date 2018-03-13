@@ -104,7 +104,7 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String name = resultSet.getString("name");
-            float assembledPrice = resultSet.getInt("assemble_price");
+            float assembledPrice = resultSet.getFloat("assemble_price");
             if (name.equals("married")) {
                 MarriedBouquet bouquet = new MarriedBouquet();
                 bouquet.setId(id);
