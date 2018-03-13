@@ -2,7 +2,20 @@ package com.flowergarden.bouquet;
 
 public class MarriedBouquet extends GeneralBouquet {
 
-    private float assemblePrice = 120;
+    private float assemblePrice;
+
+    public MarriedBouquet() {
+        this.assemblePrice = 120;
+    }
+
+    public MarriedBouquet(float assemblePrice) {
+        this.assemblePrice = assemblePrice;
+    }
+
+    public MarriedBouquet(int id, float assemblePrice){
+        this.id = id;
+        this.assemblePrice = assemblePrice;
+    }
 
     @Override
     public float getPrice() {
