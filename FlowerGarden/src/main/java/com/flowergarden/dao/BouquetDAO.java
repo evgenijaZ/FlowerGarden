@@ -94,7 +94,7 @@ public class BouquetDAO extends AbstractDAO <GeneralBouquet, Integer> {
             query = String.format("INSERT INTO`bouquet` (`id`, `name`, `assemble_price`) VALUES ('%d', '%s', '%5.2f')", id, "married", assemblePrice);
         } else {
             query = String.format("INSERT INTO`bouquet` (`id`, `name`) VALUES ('%d', '%s')", id, "general");
-           //throw new RuntimeException("This type of bouquet is not supported :"+entity.getClass().getSimpleName());
+            //throw new RuntimeException("This type of bouquet is not supported :"+entity.getClass().getSimpleName());
         }
         return handler.execute(query);
     }

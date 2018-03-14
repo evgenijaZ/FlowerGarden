@@ -44,7 +44,22 @@ public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
 
     @Override
     public boolean update(GeneralFlower entity) {
-        return false;
+        String query;
+        int id = entity.getId();
+        float price = entity.getPrice();
+        int length = entity.getLength();
+        if (entity.getClass().equals(Chamomile.class)) {
+            int petals = ((Chamomile) entity).getPetals();
+            query = String.format("UPDATE `flower` SET `name` = `%s`, `price`= '%5.2f', `length`='%d', `petals`='%d' WHERE `id`='%d'", "chamomile", price, length, petals, id);
+
+        } else if (entity.getClass().equals(Rose.class)) {
+            boolean spike = ((Rose) entity).getSpike();
+            query = String.format("UPDATE `flower` SET `name` = `%s`, `price`= '%5.2f', `length`='%d', `spike`='%b' WHERE `id`='%d'", "rose", price, length, spike, id);
+
+        } else {
+            throw new RuntimeException("This type of flower is not supported :" + entity.getClass().getSimpleName());
+        }
+        return handler.execute(query);
     }
 
     @Override
@@ -65,6 +80,22 @@ public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
             e.printStackTrace();
         }
         return flower;
+    }
+
+    public List <GeneralFlower> getByBouquetId(Integer id) {
+        List <GeneralFlower> flowers = null;
+        final String query = "SELECT * FROM `flower` WHERE `bouquet_id`=" + id;
+        ResultSet resultSet;
+        try {
+            resultSet = handler.executeQuery(query);
+            if (resultSet != null) {
+                flowers = parseResultSet(resultSet);
+                return flowers;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flowers;
     }
 
     @Override
@@ -92,7 +123,7 @@ public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
             name = "chamomile";
             int petals = ((Chamomile) entity).getPetals();
             query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `bouquet_id`, `petals`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d', '%d')", id, name, length, freshness, price, bouquetId, petals);
-        } else if (entity.getClass().equals(Chamomile.class)) {
+        } else if (entity.getClass().equals(Rose.class)) {
             name = "rose";
             boolean spike = ((Rose) entity).getSpike();
             query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `bouquet_id`, `spike`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d', '%b')", id, name, length, freshness, price, bouquetId, spike);
@@ -121,12 +152,14 @@ public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
                     Chamomile chamomile = new Chamomile(petals, length, price, new FreshnessInteger(freshness));
                     chamomile.setBouquetId(bouquetId);
                     flowers.add(chamomile);
+                    break;
                 }
                 case "rose": {
                     boolean spike = resultSet.getBoolean("spike");
                     Rose rose = new Rose(spike, length, price, new FreshnessInteger(freshness));
                     rose.setBouquetId(bouquetId);
                     flowers.add(rose);
+                    break;
                 }
                 default:
                     throw new RuntimeException("This type of flower is not supported :" + name);
