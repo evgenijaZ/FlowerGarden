@@ -118,18 +118,17 @@ public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
         int length = entity.getLength();
         int freshness = entity.getFreshness().getFreshness();
         float price = entity.getPrice();
-        int bouquetId = entity.getBouquetId();
         if (entity.getClass().equals(Chamomile.class)) {
             name = "chamomile";
             int petals = ((Chamomile) entity).getPetals();
-            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `bouquet_id`, `petals`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d', '%d')", id, name, length, freshness, price, bouquetId, petals);
+            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `petals`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d', '%d')", id, name, length, freshness, price, petals);
         } else if (entity.getClass().equals(Rose.class)) {
             name = "rose";
             boolean spike = ((Rose) entity).getSpike();
-            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `bouquet_id`, `spike`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d', '%b')", id, name, length, freshness, price, bouquetId, spike);
+            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `spike`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d', '%b')", id, name, length, freshness, price, spike);
         } else {
             name = "general";
-            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `bouquet_id`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d')", id, name, length, freshness, price, bouquetId);
+            query = String.format("INSERT INTO`bouquet` (`id`, `name`, `length`, `freshness`, `price`, `bouquet_id`) VALUES ('%d', '%s', '%d', '%d', '%5.2f', '%d')", id, name, length, freshness, price);
             //throw new RuntimeException("This type of flower is not supported :"+entity.getClass().getSimpleName());
         }
         return handler.execute(query);
@@ -150,14 +149,12 @@ public class FlowerDAO extends AbstractDAO <GeneralFlower, Integer> {
                 case "chamomile": {
                     int petals = resultSet.getInt("petals");
                     Chamomile chamomile = new Chamomile(petals, length, price, new FreshnessInteger(freshness));
-                    chamomile.setBouquetId(bouquetId);
                     flowers.add(chamomile);
                     break;
                 }
                 case "rose": {
                     boolean spike = resultSet.getBoolean("spike");
                     Rose rose = new Rose(spike, length, price, new FreshnessInteger(freshness));
-                    rose.setBouquetId(bouquetId);
                     flowers.add(rose);
                     break;
                 }
