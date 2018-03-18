@@ -35,6 +35,10 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     abstract String getUpdateQuery();
 
+    abstract String getInsertByIdQuery();
+
+    abstract String getInsertQuery();
+
     String getSelectAllQuery() {
         return String.format(SELECT_ALL, schemaName, tableName);
     }
@@ -119,9 +123,45 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     }
 
 
-    @Override
+    @SuppressWarnings("unchecked")
     public boolean create(E entity) {
-        return false;
+        boolean result = false;
+        boolean generateKey;
+        try {
+            K key = null;
+            int keyIndex = getFieldCount()-1;
+            Field field = getField(keyIndex);
+            field.setAccessible(true);
+            Object value = field.get(entity);
+
+            if (value != null && getKeyClass().isInstance(value))
+                key = (K) value;
+
+            generateKey = (key == null) || key.equals(-1);
+            PreparedStatement statement;
+            if (generateKey)
+                statement = session.getPrepareStatement(getInsertQuery());
+            else statement = session.getPrepareStatement(getInsertByIdQuery());
+
+            statement = prepareStatement(statement, entity);
+            if (statement == null)
+                return false;
+            result = statement.execute();
+            if (generateKey) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        String keyValue = generatedKeys.getString(1);
+                        setFieldValue(field, entity, keyValue);
+                    } else {
+                        throw new SQLException("Creating " + tableName + " failed, no ID obtained.");
+                    }
+                }
+            }
+            session.closePrepareStatement(statement);
+        } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 

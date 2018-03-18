@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class GeneralFlower implements Flower <Integer>, Comparable <GeneralFlower> {
 
-    private int id;
+    private int id = -1;
 
     FreshnessInteger freshness;
 
