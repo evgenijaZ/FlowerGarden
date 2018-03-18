@@ -5,6 +5,7 @@ import com.flowergarden.properties.FreshnessInteger;
 public class Chamomile extends GeneralFlower {
 
     private int petals;
+    private int id;
 
     public Chamomile(int petals, int length, float price, FreshnessInteger fresh) {
         if (length < 0) throw new IllegalArgumentException("Chamomile length can`t be negative");
@@ -28,5 +29,13 @@ public class Chamomile extends GeneralFlower {
         return petals;
     }
 
+    @Override
+    public int getId() {
+        return id;
+    }
 
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
 }
