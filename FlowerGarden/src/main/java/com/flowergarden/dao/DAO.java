@@ -18,6 +18,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     String schemaName;
     private Session session;
     private String SELECT_ALL = "SELECT * FROM %s.%s";
+    private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
 
     public DAO(String dbName, String schemaName, String tableName) {
         this.tableName = tableName;
@@ -35,6 +36,11 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     String getSelectAllQuery() {
         return String.format(SELECT_ALL, schemaName, tableName);
+    }
+
+    private String getSelectByIdQuery() {
+        String keyFieldName = getNameMapping()[getFieldCount()-1][1];
+        return String.format(SELECT_BY_ID,schemaName,tableName,keyFieldName);
     }
 
     @Override
@@ -70,9 +76,25 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return result;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
     public E getByKey(K key) {
-        return null;
+        E entity = null;
+        PreparedStatement statement = session.getPrepareStatement(getSelectByIdQuery());
+        int idIndex = getFieldCount()-1;
+        try {
+            statement = prepareStatementWithOneValue(statement, key, idIndex);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.getMetaData().getColumnCount() != 1)
+                if (resultSet.next()) {
+                    Object parsingSetResult = this.getEntityFromResultSet(resultSet);
+                    if (parsingSetResult != null && (getEntityClass()).isInstance(parsingSetResult))
+                        entity = ((E) parsingSetResult);
+                }
+            session.closePrepareStatement(statement);
+        } catch (SQLException | IllegalAccessException | NoSuchFieldException | InstantiationException e) {
+            e.printStackTrace();
+        }
+        return entity;
     }
 
     @Override
@@ -155,7 +177,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     private PreparedStatement prepareStatementWithOneValue(PreparedStatement statement, Object value, int fieldIndex) throws SQLException, NoSuchFieldException, IllegalAccessException {
         String fieldType = getFieldTypeName(fieldIndex);
-        if (statement.getParameterMetaData().getParameterCount() < fieldIndex)
+        if (statement.getParameterMetaData().getParameterCount() <= fieldIndex)
             fieldIndex = 0;
         switch (fieldType) {
             case "String": {
