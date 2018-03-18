@@ -2,11 +2,15 @@ package com.flowergarden.dao;
 
 import com.flowergarden.flowers.Chamomile;
 
+import java.util.List;
+
 /**
  * @author Yevheniia Zubrych on 18.03.2018.
  */
 public class ChamomileDAO extends FlowerDAO {
-    private String[][] nameMapping = {{"petals", "petals"}};
+    String UPDATE = "UPDATE %s.%s SET %s=? WHERE %s=?;";
+
+    private String[][] nameMapping = {{"petals", "petals"},{"id","id"}};
 
     private String parentTableName;
 
@@ -49,5 +53,12 @@ public class ChamomileDAO extends FlowerDAO {
                 .append(" LEFT JOIN ").append(parentTableName)
                 .append(" ON  ").append(tableName).append(".flower_id=").append(parentTableName).append(".id;");
         return selectAllQuery.toString();
+    }
+
+
+    @Override
+    String getUpdateQuery() {
+        //to do: добавить изменение в родительской таблице по запросу
+        return String.format(this.UPDATE, makeFormatArgs(getFieldCount(), getNameMapping()));
     }
 }

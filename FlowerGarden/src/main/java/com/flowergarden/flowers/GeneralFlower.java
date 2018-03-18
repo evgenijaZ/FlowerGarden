@@ -48,4 +48,12 @@ public class GeneralFlower implements Flower <Integer>, Comparable <GeneralFlowe
     public void setId(int id) {
         this.id = id;
     }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
 }
