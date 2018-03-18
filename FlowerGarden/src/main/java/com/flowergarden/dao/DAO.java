@@ -33,7 +33,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     public abstract String[][] getNameMapping();
 
-    private String getSelectAllQuery() {
+    String getSelectAllQuery() {
         return String.format(SELECT_ALL, schemaName, tableName);
     }
 
