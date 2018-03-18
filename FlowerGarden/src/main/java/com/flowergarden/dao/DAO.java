@@ -19,6 +19,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     private Session session;
     private String SELECT_ALL = "SELECT * FROM %s.%s";
     private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
+    private String DELETE_BY_ID = "DELETE FROM %s.%s WHERE %s = ?;";
 
     public DAO(String dbName, String schemaName, String tableName) {
         this.tableName = tableName;
@@ -42,6 +43,12 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         String keyFieldName = getNameMapping()[getFieldCount()-1][1];
         return String.format(SELECT_BY_ID,schemaName,tableName,keyFieldName);
     }
+
+    private String getDeleteByIdQuery() {
+        String keyFieldName = getNameMapping()[getNameMapping().length-1][1];
+        return String.format(DELETE_BY_ID,schemaName,tableName,keyFieldName);
+    }
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -97,10 +104,20 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return entity;
     }
 
-    @Override
     public boolean deleteByKey(K key) {
-        return false;
+        boolean result = false;
+        PreparedStatement statement = session.getPrepareStatement(getDeleteByIdQuery());
+        int idIndex = getFieldCount()-1;
+        try {
+            statement = prepareStatementWithOneValue(statement, key, idIndex);
+            result = statement.execute();
+            session.closePrepareStatement(statement);
+        } catch (SQLException | IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
+
 
     @Override
     public boolean create(E entity) {
