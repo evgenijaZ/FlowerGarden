@@ -7,9 +7,21 @@ import java.util.List;
  */
 public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
-    private Session handler;
+    private Session session;
     String tableName;
     String dbName;
+
+    public DAO(String tableName, String dbName) {
+        this.tableName = tableName;
+        this.dbName = dbName;
+        this.session = new Session(dbName);
+    }
+
+    protected abstract Class <E> getEntityClass();
+
+    protected abstract Class <K> getKeyClass();
+
+    public abstract String[][] getNameMapping();
 
     @Override
     public List <E> getAll() {
