@@ -15,6 +15,8 @@ public class Chamomile extends GeneralFlower {
         this.price = price;
         this.freshness = fresh;
     }
+        public Chamomile() {
+    }
 
     public boolean getPetal() {
         if (petals <= 0) return false;
