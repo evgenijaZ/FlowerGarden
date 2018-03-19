@@ -2,8 +2,6 @@ package com.flowergarden.dao;
 
 import com.flowergarden.flowers.GeneralFlower;
 
-import java.util.List;
-
 /**
  * @author Yevheniia Zubrych on 13.03.2018.
  */
@@ -15,7 +13,7 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
     private String[][] nameMapping = {{"freshness", "freshness"}, {"length", "length"}, {"price", "price"}, {"id", "id"}};
 
     public FlowerDAO(String dbName, String schemaName, String tableName) {
-        super(dbName,schemaName, tableName);
+        super(dbName, schemaName, tableName);
     }
 
     @Override
@@ -25,7 +23,7 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
 
     @Override
     protected Class <Integer> getKeyClass() {
-        return Integer.TYPE;
+        return Integer.class;
     }
 
     @Override
@@ -40,13 +38,13 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
 
     @Override
     public String getInsertQuery() {
-        return String.format(INSERT,makeFormatArgs(getFieldCount()-1,getNameMapping()));
+        return String.format(INSERT, makeFormatArgs(getFieldCount() - 1, getNameMapping()));
 
     }
 
     @Override
     public String getInsertByIdQuery() {
-        return String.format(INSERT_BY_ID, makeFormatArgs(getFieldCount(),getNameMapping()));
+        return String.format(INSERT_BY_ID, makeFormatArgs(getFieldCount(), getNameMapping()));
     }
 
 }
