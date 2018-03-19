@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     private String SELECT_ALL = "SELECT * FROM %s.%s";
     private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
     private String DELETE_BY_ID = "DELETE FROM %s.%s WHERE %s = ?;";
+    private String TRUNCATE_TABLE = "DELETE FROM %s.%s;";
+
 
     public DAO(String dbName, String schemaName, String tableName) {
         this.tableName = tableName;
@@ -39,6 +42,9 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     abstract String getInsertQuery();
 
+    private String getTruncateTable() {
+        return String.format(TRUNCATE_TABLE, schemaName, tableName);
+    }
     String getSelectAllQuery() {
         return String.format(SELECT_ALL, schemaName, tableName);
     }
@@ -66,7 +72,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
                 if (parsingSetResult != null && (getEntityClass()).isInstance(parsingSetResult))
                     entities.add((E) parsingSetResult);
             }
-            session.closePrepareStatement(statement);
+            session.closeStatement(statement);
         } catch (SQLException | IllegalAccessException | NoSuchFieldException | InstantiationException e) {
             e.printStackTrace();
         }
@@ -80,7 +86,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         try {
             statement = prepareStatement(statement, entity);
             result = statement != null && statement.execute();
-            session.closePrepareStatement(statement);
+            session.closeStatement(statement);
         } catch (SQLException | IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -101,7 +107,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
                     if (parsingSetResult != null && (getEntityClass()).isInstance(parsingSetResult))
                         entity = ((E) parsingSetResult);
                 }
-            session.closePrepareStatement(statement);
+            session.closeStatement(statement);
         } catch (SQLException | IllegalAccessException | NoSuchFieldException | InstantiationException e) {
             e.printStackTrace();
         }
@@ -115,7 +121,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         try {
             statement = prepareStatementWithOneValue(statement, key, idIndex);
             result = statement.execute();
-            session.closePrepareStatement(statement);
+            session.closeStatement(statement);
         } catch (SQLException | IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -157,7 +163,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
                     }
                 }
             }
-            session.closePrepareStatement(statement);
+            session.closeStatement(statement);
         } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -284,5 +290,17 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
             args.add(nameMapping[i][1]);
         }
         return args.toArray();
+    }
+
+    void truncateTable() {
+        Statement statement;
+        try {
+            statement = session.getStatement();
+            statement.execute(String.format(getTruncateTable(), schemaName, tableName));
+            session.closeStatement(statement);
+            statement.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
