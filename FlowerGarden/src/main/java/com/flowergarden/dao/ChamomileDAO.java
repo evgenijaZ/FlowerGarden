@@ -2,15 +2,15 @@ package com.flowergarden.dao;
 
 import com.flowergarden.flowers.Chamomile;
 
-import java.util.List;
-
 /**
  * @author Yevheniia Zubrych on 18.03.2018.
  */
 public class ChamomileDAO extends FlowerDAO {
     String UPDATE = "UPDATE %s.%s SET %s=? WHERE %s=?;";
+    private String INSERT = "INSERT INTO %s.%s (%s) VALUES (?);";
+    private String INSERT_BY_ID = "INSERT INTO %s.%s (%s, %s) VALUES (?, ?);";
 
-    private String[][] nameMapping = {{"petals", "petals"},{"id","id"}};
+    private String[][] nameMapping = {{"petals", "petals"}, {"id", "id"}};
 
     private String parentTableName;
 
@@ -61,4 +61,15 @@ public class ChamomileDAO extends FlowerDAO {
         //to do: добавить изменение в родительской таблице по запросу
         return String.format(this.UPDATE, makeFormatArgs(getFieldCount(), getNameMapping()));
     }
+
+    public String getInsertQuery() {
+        return String.format(INSERT, makeFormatArgs(getFieldCount() - 1, getNameMapping()));
+
+    }
+
+    @Override
+    public String getInsertByIdQuery() {
+        return String.format(INSERT_BY_ID, makeFormatArgs(getFieldCount(), getNameMapping()));
+    }
+
 }
