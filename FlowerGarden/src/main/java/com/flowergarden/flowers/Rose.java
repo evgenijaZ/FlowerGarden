@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Rose extends GeneralFlower {
 
+    private int id;
     private boolean spike;
 
     public Rose(boolean spike, int length, float price, FreshnessInteger fresh) {
@@ -19,12 +20,19 @@ public class Rose extends GeneralFlower {
     }
 
     public Rose() {
-
     }
 
     public boolean getSpike() {
         return spike;
     }
 
+    @Override
+    public int getId() {
+        return id;
+    }
 
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
 }

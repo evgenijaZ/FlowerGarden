@@ -13,7 +13,6 @@ import java.util.List;
 public abstract class GeneralBouquet implements Bouquet <GeneralFlower> {
     private List <GeneralFlower> flowerList = new ArrayList <>();
     int id;
-
     @Override
     public float getPrice() {
         float price = 0;
