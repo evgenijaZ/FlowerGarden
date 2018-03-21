@@ -64,15 +64,16 @@ class Session {
     }
 
 
-    void closePrepareStatement(PreparedStatement preparedStatement) {
-        System.out.println(preparedStatement);
-        if (preparedStatement != null) {
+    void closeStatement(Statement statement) {
+        if (statement != null) {
             try {
-                preparedStatement.close();
+                statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
+
+
 
 }
