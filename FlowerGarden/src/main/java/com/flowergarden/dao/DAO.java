@@ -36,27 +36,61 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     public abstract String[][] getNameMapping();
 
-    abstract String getUpdateQuery();
+    String getUpdateQuery() {
+        //"UPDATE %s.%s SET %s=?, ... %s=? WHERE %s=?"
+        StringBuilder query = new StringBuilder("UPDATE %s.%s SET ");
+        int colCount = getFieldCount() - 1;
+        for (int i = 0; i < colCount; i++) {
+            query.append("%s=? ,");
+        }
+        query.deleteCharAt(query.lastIndexOf(","));
+        query.append("WHERE %s=?;");
+        return String.format(query.toString(), makeFormatArgs(colCount + 1, getNameMapping()));
+    }
 
-    abstract String getInsertByIdQuery();
+    String getInsertByIdQuery() {
+        int colCount = getFieldCount();
+        return String.format(makeInsertQuery(colCount), makeFormatArgs(colCount, getNameMapping()));
 
-    abstract String getInsertQuery();
+    }
+
+    String getInsertQuery() {
+        int colCount = getFieldCount() - 1;
+        return String.format(makeInsertQuery(colCount), makeFormatArgs(colCount, getNameMapping()));
+    }
+
+    String makeInsertQuery(int count) {
+        //"INSERT INTO %s.%s (%s, ... %s) VALUES (?, ... ?);";
+        StringBuilder query = new StringBuilder("INSERT INTO %s.%s (");
+        for (int i = 0; i < count; i++) {
+            query.append("%s, ");
+        }
+        query.deleteCharAt(query.lastIndexOf(","));
+        query.append(") VALUES (");
+        for (int i = 0; i < count; i++) {
+            query.append("?, ");
+        }
+        query.deleteCharAt(query.lastIndexOf(","));
+        query.append(");");
+        return query.toString();
+    }
 
     private String getTruncateTable() {
         return String.format(TRUNCATE_TABLE, schemaName, tableName);
     }
+
     String getSelectAllQuery() {
         return String.format(SELECT_ALL, schemaName, tableName);
     }
 
     private String getSelectByIdQuery() {
-        String keyFieldName = getNameMapping()[getFieldCount()-1][1];
-        return String.format(SELECT_BY_ID,schemaName,tableName,keyFieldName);
+        String keyFieldName = getNameMapping()[getFieldCount() - 1][1];
+        return String.format(SELECT_BY_ID, schemaName, tableName, keyFieldName);
     }
 
     private String getDeleteByIdQuery() {
-        String keyFieldName = getNameMapping()[getNameMapping().length-1][1];
-        return String.format(DELETE_BY_ID,schemaName,tableName,keyFieldName);
+        String keyFieldName = getNameMapping()[getNameMapping().length - 1][1];
+        return String.format(DELETE_BY_ID, schemaName, tableName, keyFieldName);
     }
 
 
@@ -97,7 +131,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     public E getByKey(K key) {
         E entity = null;
         PreparedStatement statement = session.getPrepareStatement(getSelectByIdQuery());
-        int idIndex = getFieldCount()-1;
+        int idIndex = getFieldCount() - 1;
         try {
             statement = prepareStatementWithOneValue(statement, key, idIndex);
             ResultSet resultSet = statement.executeQuery();
@@ -117,7 +151,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     public boolean deleteByKey(K key) {
         boolean result = false;
         PreparedStatement statement = session.getPrepareStatement(getDeleteByIdQuery());
-        int idIndex = getFieldCount()-1;
+        int idIndex = getFieldCount() - 1;
         try {
             statement = prepareStatementWithOneValue(statement, key, idIndex);
             result = statement.execute();
@@ -135,7 +169,7 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         boolean generateKey;
         try {
             K key = null;
-            int keyIndex = getFieldCount()-1;
+            int keyIndex = getFieldCount() - 1;
             Field field = getField(keyIndex);
             field.setAccessible(true);
             Object value = field.get(entity);
@@ -266,13 +300,13 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
             }
             case "Freshness":
             case "FreshnessInteger":
-                statement.setInt(fieldIndex +1, ((FreshnessInteger)value).getFreshness());
+                statement.setInt(fieldIndex + 1, ((FreshnessInteger) value).getFreshness());
                 break;
         }
         return statement;
     }
 
-    int getFieldCount(){
+    int getFieldCount() {
         return getNameMapping().length;
     }
 
@@ -282,11 +316,11 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return field.getType().getSimpleName();
     }
 
-   Object[] makeFormatArgs(int count, String[][] nameMapping){
-        List<String> args = new ArrayList <>();
+    Object[] makeFormatArgs(int count, String[][] nameMapping) {
+        List <String> args = new ArrayList <>();
         args.add(schemaName);
         args.add(tableName);
-        for(int i=0; i<count; i++){
+        for (int i = 0; i < count; i++) {
             args.add(nameMapping[i][1]);
         }
         return args.toArray();

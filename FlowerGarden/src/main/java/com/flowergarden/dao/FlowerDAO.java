@@ -31,20 +31,4 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
         return this.nameMapping;
     }
 
-    @Override
-    String getUpdateQuery() {
-        return String.format(this.UPDATE, makeFormatArgs(getFieldCount(), getNameMapping()));
-    }
-
-    @Override
-    public String getInsertQuery() {
-        return String.format(INSERT, makeFormatArgs(getFieldCount() - 1, getNameMapping()));
-
-    }
-
-    @Override
-    public String getInsertByIdQuery() {
-        return String.format(INSERT_BY_ID, makeFormatArgs(getFieldCount(), getNameMapping()));
-    }
-
 }
