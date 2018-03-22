@@ -6,13 +6,10 @@ import com.flowergarden.flowers.GeneralFlower;
  * @author Yevheniia Zubrych on 13.03.2018.
  */
 public class FlowerDAO extends DAO <GeneralFlower, Integer> {
-    String UPDATE = "UPDATE %s.%s SET %s=?,%s=?,%s=? WHERE %s=?;";
-    private String INSERT = "INSERT INTO %s.%s (%s, %s, %s) VALUES (?, ?, ?);";
-    private String INSERT_BY_ID = "INSERT INTO %s.%s (%s, %s, %s, %s) VALUES (?, ?, ?, ?);";
 
     private String[][] nameMapping = {{"freshness", "freshness"}, {"length", "length"}, {"price", "price"}, {"id", "id"}};
 
-    public FlowerDAO(String dbName, String schemaName, String tableName) {
+    FlowerDAO(String dbName, String schemaName, String tableName) {
         super(dbName, schemaName, tableName);
     }
 

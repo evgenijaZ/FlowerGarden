@@ -44,6 +44,14 @@ public class GeneralFlower implements Flower <Integer>, Comparable <GeneralFlowe
         return length;
     }
 
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
     @Override
     public int compareTo(GeneralFlower compareFlower) {
         int compareFresh = compareFlower.getFreshness().getFreshness();

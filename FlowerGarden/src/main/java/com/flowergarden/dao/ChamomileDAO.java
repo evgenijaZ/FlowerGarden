@@ -1,6 +1,7 @@
 package com.flowergarden.dao;
 
 import com.flowergarden.flowers.Chamomile;
+import com.flowergarden.flowers.GeneralFlower;
 
 /**
  * @author Yevheniia Zubrych on 18.03.2018.
@@ -8,6 +9,7 @@ import com.flowergarden.flowers.Chamomile;
 public class ChamomileDAO extends FlowerDAO {
     private String[][] nameMapping = {{"petals", "petals"}, {"id", "id"}};
     private String parentTableName;
+    private String foreignKey = "flower_id";
 
     public ChamomileDAO(String dbName, String schemaName, String parentTableName, String tableName) {
         super(dbName, schemaName, tableName);
@@ -26,27 +28,14 @@ public class ChamomileDAO extends FlowerDAO {
 
     @Override
     String getSelectAllQuery() {
-        StringBuilder selectAllQuery = new StringBuilder("SELECT ");
         String[][] parentMapping = super.getNameMapping();
-        String[][] currentMapping = this.getNameMapping();
-        for (String[] map : parentMapping) {
-            String columnName = map[1];
-            selectAllQuery
-                    .append(parentTableName).append(".").append(columnName)
-                    .append(" as ").append(columnName).append(",  ");
-
-        }
-        for (String[] map : currentMapping) {
-            String columnName = map[1];
-            selectAllQuery
-                    .append(tableName).append(".").append(columnName)
-                    .append(" as ").append(columnName).append(",  ");
-
-        }
-        selectAllQuery.deleteCharAt(selectAllQuery.lastIndexOf(","));
-        selectAllQuery.append("FROM ").append(tableName)
-                .append(" LEFT JOIN ").append(parentTableName)
-                .append(" ON  ").append(tableName).append(".flower_id=").append(parentTableName).append(".id;");
-        return selectAllQuery.toString();
+        return getSelectAllQueryWithParent(parentMapping, parentTableName, foreignKey);
     }
+
+    public boolean create(Chamomile item) {
+        GeneralFlower flower = new GeneralFlower(item.getPrice(), item.getLength(), item.getFreshness());
+        return createWithParent(item, parentTableName, super.getNameMapping(), super.getEntityClass(), flower, foreignKey);
+
+    }
+
 }
