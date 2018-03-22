@@ -11,15 +11,15 @@ public class Rose extends GeneralFlower {
     private boolean spike;
 
     public Rose(boolean spike, int length, float price, FreshnessInteger fresh) {
+        super(price, length, fresh);
         if (length < 0) throw new IllegalArgumentException("Rose length can`t be negative");
         if (price < 0) throw new IllegalArgumentException("Rose price can`t be negative");
         this.spike = spike;
-        this.length = length;
-        this.price = price;
-        this.freshness = fresh;
+        this.id = -1;
     }
 
     public Rose() {
+       this.id = -1;
     }
 
     public boolean getSpike() {

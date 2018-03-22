@@ -20,7 +20,7 @@ class Session {
         connection = openConnection();
     }
 
-    private Connection openConnection() {
+     Connection openConnection() {
         File file = new File(dbName+".db");
         try {
             return DriverManager.getConnection(URL + file.getCanonicalFile().toURI());
@@ -73,6 +73,33 @@ class Session {
             }
         }
     }
+
+    void setAutoCommit(boolean autoCommit){
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void commit(){
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void rollback(){
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
 
