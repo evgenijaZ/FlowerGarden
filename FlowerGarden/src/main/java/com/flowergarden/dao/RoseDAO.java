@@ -32,7 +32,8 @@ public class RoseDAO extends FlowerDAO {
         return getSelectAllQueryWithParent(parentMapping, parentTableName, foreignKey);
     }
 
-    public boolean create(Rose item) {
+    @Override
+    public boolean create(GeneralFlower item) {
         GeneralFlower flower = new GeneralFlower(item.getPrice(), item.getLength(), item.getFreshness());
         return createWithParent(item, parentTableName, super.getNameMapping(),super.getEntityClass(), flower, foreignKey);
     }
