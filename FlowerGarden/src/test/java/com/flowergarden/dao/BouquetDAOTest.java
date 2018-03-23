@@ -143,7 +143,11 @@ public class BouquetDAOTest {
 
         dao.create(bouquet1);
 
-        Assert.assertEquals(25+50+285+100, bouquet1.getPrice(), 0.001);
+        //When
+        MarriedBouquet actualBouquet = dao.getByKey(4);
+
+        //Then
+        Assert.assertEquals( bouquet1.getPrice(),actualBouquet.getPrice(), 0.001);
     }
 
     @After
