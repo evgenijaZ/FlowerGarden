@@ -1,6 +1,9 @@
 package com.flowergarden.dao;
 
 import com.flowergarden.bouquet.MarriedBouquet;
+import com.flowergarden.flowers.Chamomile;
+import com.flowergarden.flowers.Rose;
+import com.flowergarden.properties.FreshnessInteger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +15,7 @@ import java.util.List;
  * @author Yevheniia Zubrych on 21.03.2018.
  */
 public class BouquetDAOTest {
-    private DAO <MarriedBouquet, Integer> dao;
+    private BouquetDAO dao;
 
     private MarriedBouquet bouquet1;
     private MarriedBouquet bouquet2;
@@ -122,6 +125,25 @@ public class BouquetDAOTest {
         //Then
         MarriedBouquet actualBouquet = dao.getByKey(id);
         Assert.assertEquals(bouquet2, actualBouquet);
+    }
+
+    @Test
+    public void testPrice(){
+        //Given
+        bouquet1.setId(4);
+
+        Chamomile chamomile1 = new Chamomile(24, 12, 25, new FreshnessInteger(4));
+        Chamomile chamomile2 = new Chamomile(24, 16, 50, new FreshnessInteger(5));
+
+        Rose rose = new Rose(false, 212, 285, new FreshnessInteger(434));
+
+        bouquet1.addFlower(chamomile1);
+        bouquet1.addFlower(chamomile2);
+        bouquet1.addFlower(rose);
+
+        dao.create(bouquet1);
+
+        Assert.assertEquals(25+50+285+100, bouquet1.getPrice(), 0.001);
     }
 
     @After
