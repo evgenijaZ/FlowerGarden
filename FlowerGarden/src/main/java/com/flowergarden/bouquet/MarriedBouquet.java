@@ -2,49 +2,31 @@ package com.flowergarden.bouquet;
 
 import com.flowergarden.flowers.GeneralFlower;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public class MarriedBouquet implements Bouquet <GeneralFlower> {
+public class MarriedBouquet extends GeneralBouquet {
 
-    private float assemblePrice = 120;
-    private List <GeneralFlower> flowerList = new ArrayList <>();
+    private int id;
+    private float assemblePrice;
+
+    public MarriedBouquet() {
+        this.assemblePrice = 120;
+        this.id = -1;
+    }
+
+    public MarriedBouquet(float assemblePrice) {
+        this.assemblePrice = assemblePrice;
+        this.id = -1;
+    }
+
+    public MarriedBouquet(int id, float assemblePrice){
+        this.id = id;
+        this.assemblePrice = assemblePrice;
+    }
 
     @Override
     public float getPrice() {
-        float price = assemblePrice;
-        for (GeneralFlower flower : flowerList) {
-            price += flower.getPrice();
-        }
-        return price;
-    }
-
-    @Override
-    public void addFlower(GeneralFlower flower) {
-        flowerList.add(flower);
-    }
-
-    @Override
-    public Collection <GeneralFlower> searchFlowersByLength(int start, int end) {
-        List <GeneralFlower> searchResult = new ArrayList <>();
-        for (GeneralFlower flower : flowerList) {
-            if (flower.getLength() >= start && flower.getLength() <= end) {
-                searchResult.add(flower);
-            }
-        }
-        return searchResult;
-    }
-
-    @Override
-    public void sortByFreshness() {
-        Collections.sort(flowerList);
-    }
-
-    @Override
-    public Collection <GeneralFlower> getFlowers() {
-        return flowerList;
+        return super.getPrice() + assemblePrice;
     }
 
     public void setAssembledPrice(float price) {
@@ -53,5 +35,25 @@ public class MarriedBouquet implements Bouquet <GeneralFlower> {
 
     public float getAssemblePrice() {
         return assemblePrice;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof MarriedBouquet))
+            return false;
+        MarriedBouquet bouquet = (MarriedBouquet) obj;
+        return (this.assemblePrice == bouquet.assemblePrice)
+                && Objects.equals(this.getFlowers(), bouquet.getFlowers());
     }
 }
