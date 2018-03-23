@@ -7,11 +7,11 @@ import com.flowergarden.flowers.Rose;
  * @author Yevheniia Zubrych on 23.03.2018.
  */
 public class RoseDAO extends FlowerDAO {
-    private String[][] nameMapping = {{"spike", "spike"}, {"id", "id"}};
+    static String[][] nameMapping = {{"spike", "spike"}, {"id", "id"}};
     private String parentTableName;
     private String foreignKey = "flower_id";
 
-    public RoseDAO(String dbName, String schemaName, String parentTableName, String tableName) {
+    RoseDAO(String dbName, String schemaName, String parentTableName, String tableName) {
         super(dbName, schemaName, tableName);
         this.parentTableName = parentTableName;
     }
@@ -34,7 +34,19 @@ public class RoseDAO extends FlowerDAO {
 
     public boolean create(Rose item) {
         GeneralFlower flower = new GeneralFlower(item.getPrice(), item.getLength(), item.getFreshness());
-        return createWithParent(item, parentTableName, super.getNameMapping(), super.getEntityClass(), flower, foreignKey);
+        return createWithParent(item, parentTableName, super.getNameMapping(),super.getEntityClass(), flower, foreignKey);
+    }
+
+    @Override
+    public boolean update(GeneralFlower entity) {
+        //TODO: update flower`s attributes
+        return super.update(entity);
+    }
+
+    @Override
+    public boolean deleteByKey(Integer key) {
+        //TODO: delete flower from parent table
+        return super.deleteByKey(key);
     }
 }
 

@@ -7,7 +7,7 @@ import com.flowergarden.flowers.GeneralFlower;
  */
 public class FlowerDAO extends DAO <GeneralFlower, Integer> {
 
-    private String[][] nameMapping = {{"freshness", "freshness"}, {"length", "length"}, {"price", "price"}, {"id", "id"}};
+    static String[][] nameMapping = {{"freshness", "freshness"}, {"length", "length"}, {"price", "price"}, {"id", "id"}};
 
     FlowerDAO(String dbName, String schemaName, String tableName) {
         super(dbName, schemaName, tableName);
@@ -25,7 +25,7 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
 
     @Override
     public String[][] getNameMapping() {
-        return this.nameMapping;
+        return nameMapping;
     }
 
 }

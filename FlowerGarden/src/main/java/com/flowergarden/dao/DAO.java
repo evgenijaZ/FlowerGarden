@@ -15,10 +15,10 @@ import java.util.List;
  */
 public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
+    protected Session session;
     String tableName;
-    private Session session;
-    private String dbName;
-    private String schemaName;
+    String dbName;
+    String schemaName;
     private String SELECT_ALL = "SELECT * FROM %s.%s";
     private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
     private String DELETE_BY_ID = "DELETE FROM %s.%s WHERE %s = ?;";
@@ -103,9 +103,9 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
         }
         selectAllQuery.deleteCharAt(selectAllQuery.lastIndexOf(","));
-        selectAllQuery.append("FROM ").append(tableName)
-                .append(" LEFT JOIN ").append(parentTableName)
-                .append(" ON  ").append(tableName).append(".").append(foreignKey).append("=").append(parentTableName).append(".id;");
+        selectAllQuery.append("FROM ").append(parentTableName)
+                .append(" JOIN ").append(tableName)
+                .append(" ON  ").append(parentTableName).append(".id").append("=").append(tableName).append(".").append(foreignKey);
         return selectAllQuery.toString();
     }
 
@@ -321,10 +321,16 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return true;
     }
 
-    private Object getEntityFromResultSet(ResultSet resultSet) throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
+    protected Object getEntityFromResultSet(ResultSet resultSet) throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
         Class <?> entityClass = this.getEntityClass();
+        String[][] nameMapping = getNameMapping();
+        return getEntityFromResultSet(resultSet, entityClass, nameMapping);
+    }
+
+
+    protected Object getEntityFromResultSet(ResultSet resultSet, Class entityClass, String[][] nameMapping) throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
         Object instance = entityClass.newInstance();
-        for (String[] columnFieldPair : (getNameMapping())) {
+        for (String[] columnFieldPair : (nameMapping)) {
             String fieldName = columnFieldPair[0];
             String columnName = columnFieldPair[1];
 
