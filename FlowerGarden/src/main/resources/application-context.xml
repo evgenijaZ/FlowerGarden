@@ -7,7 +7,7 @@
 
     <context:property-placeholder location="bouquet.properties,db.properties" />
 
-    <import resource="application-context-text.xml"/>
+    <import resource="application-context-test.xml"/>
 
     <!-- DAO -->
 
