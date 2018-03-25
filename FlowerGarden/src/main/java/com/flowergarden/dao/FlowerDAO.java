@@ -11,7 +11,7 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
 
     static String[][] nameMapping = {{"freshness", "freshness"}, {"length", "length"}, {"price", "price"}, {"id", "id"}};
 
-    FlowerDAO(DataSource dataSource, String schemaName, String tableName) {
+    public FlowerDAO(DataSource dataSource, String schemaName, String tableName) {
         super(dataSource, schemaName, tableName);
     }
 

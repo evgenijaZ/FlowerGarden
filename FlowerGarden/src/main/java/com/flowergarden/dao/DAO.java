@@ -3,7 +3,6 @@ package com.flowergarden.dao;
 import com.flowergarden.properties.FreshnessInteger;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,9 +16,9 @@ import java.util.List;
  */
 public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
-    protected Session session;
+    Session session;
     DataSource dataSource;
-    String tableName;
+    private String tableName;
     String schemaName;
     private String SELECT_ALL = "SELECT * FROM %s.%s";
     private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
