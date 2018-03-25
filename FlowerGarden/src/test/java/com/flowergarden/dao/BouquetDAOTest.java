@@ -1,5 +1,6 @@
 package com.flowergarden.dao;
 
+import com.flowergarden.ApplicationContextDAO;
 import com.flowergarden.bouquet.MarriedBouquet;
 import com.flowergarden.flowers.Chamomile;
 import com.flowergarden.flowers.Rose;
@@ -8,42 +9,42 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import javax.naming.NamingException;
 import java.util.List;
 
 /**
  * @author Yevheniia Zubrych on 21.03.2018.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:application-context.xml")
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 public class BouquetDAOTest {
-    @Autowired
-    ApplicationContext context;
+
+    private ApplicationContext context;
     private BouquetDAO dao;
 
     private MarriedBouquet bouquet1;
     private MarriedBouquet bouquet2;
     private MarriedBouquet bouquet3;
 
-    public BouquetDAOTest() throws NamingException {
-    }
 
     @Before
     public void initDao() {
+        context = new AnnotationConfigApplicationContext(ApplicationContextDAO.class);
         dao = (BouquetDAO) context.getBean("bouquetDAO");
         dao.truncateTable();
     }
 
     @Before
     public void initBouquets() {
-        bouquet1 = (MarriedBouquet) context.getBean("marriedBouquet1");
-        bouquet2 = (MarriedBouquet) context.getBean("marriedBouquet2");
-        bouquet3 = (MarriedBouquet) context.getBean("marriedBouquet3");
+        bouquet1 = (MarriedBouquet) context.getBean("bouquet1");
+        bouquet2 = (MarriedBouquet) context.getBean("bouquet2");
+        bouquet3 = (MarriedBouquet) context.getBean("bouquet3");
     }
 
     @Test
@@ -145,7 +146,7 @@ public class BouquetDAOTest {
         Chamomile chamomile1 = (Chamomile) context.getBean("chamomile1");
         Chamomile chamomile2 = (Chamomile) context.getBean("chamomile2");
 
-        Rose rose = (Rose) context.getBean("rose1");
+        Rose rose = (Rose) context.getBean("rose");
 
         bouquet1.addFlower(chamomile1);
         bouquet1.addFlower(chamomile2);
@@ -160,13 +161,18 @@ public class BouquetDAOTest {
         //Then
         Assert.assertEquals(bouquet1.getPrice(), actualBouquet.getPrice(), 0.001);
 
-        bouquet1=null;
-        bouquet2=null;
-        bouquet3=null;
+        bouquet1 = null;
+        bouquet2 = null;
+        bouquet3 = null;
     }
 
     @After
     public void cleanTable() {
-         dao.truncateTable();
+        dao.truncateTable();
+    }
+
+    @org.springframework.context.annotation.Configuration
+    @Import(ApplicationContextDAO.class)
+    public static class ContextConfiguration {
     }
 }
