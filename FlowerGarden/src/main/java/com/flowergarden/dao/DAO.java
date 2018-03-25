@@ -2,6 +2,8 @@ package com.flowergarden.dao;
 
 import com.flowergarden.properties.FreshnessInteger;
 
+import javax.sql.DataSource;
+import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +18,8 @@ import java.util.List;
 public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     protected Session session;
+    DataSource dataSource;
     String tableName;
-    String dbName;
     String schemaName;
     private String SELECT_ALL = "SELECT * FROM %s.%s";
     private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
@@ -25,11 +27,11 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     private String TRUNCATE_TABLE = "DELETE FROM %s.%s;";
 
 
-    DAO(String dbName, String schemaName, String tableName) {
-        this.dbName = dbName;
+    DAO(DataSource dataSource, String schemaName, String tableName) {
         this.tableName = tableName;
         this.schemaName = schemaName;
-        this.session = new Session(dbName);
+        this.session = new Session(dataSource);
+        this.dataSource = dataSource;
     }
 
     protected abstract Class <E> getEntityClass();
@@ -207,10 +209,10 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
             if (generateKey)
                 statement = session.getPrepareStatement(getInsertQuery());
             else statement = session.getPrepareStatement(getInsertByIdQuery());
-
-            statement = prepareStatement(statement, entity);
             if (statement == null)
                 return false;
+            statement = prepareStatement(statement, entity);
+
             result = statement.execute();
             if (generateKey) {
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -472,6 +474,10 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
     }
 
     void truncateTable() {
+        truncateTable(this.tableName);
+    }
+
+    void truncateTable(String tableName) {
         Statement statement;
         try {
             statement = session.getStatement();

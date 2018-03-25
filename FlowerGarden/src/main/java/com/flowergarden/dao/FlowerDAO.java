@@ -2,6 +2,8 @@ package com.flowergarden.dao;
 
 import com.flowergarden.flowers.GeneralFlower;
 
+import javax.sql.DataSource;
+
 /**
  * @author Yevheniia Zubrych on 13.03.2018.
  */
@@ -9,8 +11,8 @@ public class FlowerDAO extends DAO <GeneralFlower, Integer> {
 
     static String[][] nameMapping = {{"freshness", "freshness"}, {"length", "length"}, {"price", "price"}, {"id", "id"}};
 
-    FlowerDAO(String dbName, String schemaName, String tableName) {
-        super(dbName, schemaName, tableName);
+    FlowerDAO(DataSource dataSource, String schemaName, String tableName) {
+        super(dataSource, schemaName, tableName);
     }
 
     @Override

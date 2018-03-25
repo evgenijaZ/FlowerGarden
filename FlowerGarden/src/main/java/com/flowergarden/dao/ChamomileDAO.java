@@ -3,6 +3,8 @@ package com.flowergarden.dao;
 import com.flowergarden.flowers.Chamomile;
 import com.flowergarden.flowers.GeneralFlower;
 
+import javax.sql.DataSource;
+
 /**
  * @author Yevheniia Zubrych on 18.03.2018.
  */
@@ -11,8 +13,8 @@ public class ChamomileDAO extends FlowerDAO {
     private String parentTableName;
     private String foreignKey = "flower_id";
 
-    ChamomileDAO(String dbName, String schemaName, String parentTableName, String tableName) {
-        super(dbName, schemaName, tableName);
+    ChamomileDAO(DataSource dataSource, String schemaName, String parentTableName, String tableName) {
+        super(dataSource, schemaName, tableName);
         this.parentTableName = parentTableName;
     }
 

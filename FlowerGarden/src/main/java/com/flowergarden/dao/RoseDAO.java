@@ -3,6 +3,8 @@ package com.flowergarden.dao;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.flowers.Rose;
 
+import javax.sql.DataSource;
+
 /**
  * @author Yevheniia Zubrych on 23.03.2018.
  */
@@ -11,8 +13,8 @@ public class RoseDAO extends FlowerDAO {
     private String parentTableName;
     private String foreignKey = "flower_id";
 
-    RoseDAO(String dbName, String schemaName, String parentTableName, String tableName) {
-        super(dbName, schemaName, tableName);
+    RoseDAO(DataSource dataSource, String schemaName, String parentTableName, String tableName) {
+        super(dataSource, schemaName, tableName);
         this.parentTableName = parentTableName;
     }
 
