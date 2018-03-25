@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Married bouquets -->
+
+    <bean id="marriedBouquet1" class="com.flowergarden.bouquet.MarriedBouquet" scope="prototype">
+        <constructor-arg name="assemblePrice" value="${bouquet1.price}"/>
+    </bean>
+
+    <bean id="marriedBouquet2" class="com.flowergarden.bouquet.MarriedBouquet" scope="prototype">
+        <constructor-arg name="assemblePrice" value="${bouquet2.price}"/>
+    </bean>
+
+    <bean id="marriedBouquet3" class="com.flowergarden.bouquet.MarriedBouquet" scope="prototype"/>
+
+    <!--General flowers-->
+
+    <bean id="flower1" class="com.flowergarden.flowers.GeneralFlower" scope="prototype">
+        <constructor-arg name="price" value="${flower1.price}"/>
+        <constructor-arg name="length" value="${flower1.length}"/>
+        <constructor-arg name="freshness" ref="freshness1"/>
+    </bean>
+
+    <bean id="flower2" class="com.flowergarden.flowers.GeneralFlower" scope="prototype">
+        <constructor-arg name="price" value="${flower2.price}"/>
+        <constructor-arg name="length" value="${flower2.length}"/>
+        <constructor-arg name="freshness" ref="freshness2"/>
+    </bean>
+
+    <bean id="flower3" class="com.flowergarden.flowers.GeneralFlower" scope="prototype">
+        <constructor-arg name="price" value="${flower3.price}"/>
+        <constructor-arg name="length" value="${flower3.length}"/>
+        <constructor-arg name="freshness" ref="freshness3"/>
+    </bean>
+
+    <bean id="flower4" class="com.flowergarden.flowers.GeneralFlower" scope="prototype">
+        <constructor-arg name="price" value="${flower4.price}"/>
+        <constructor-arg name="length" value="${flower4.length}"/>
+        <constructor-arg name="freshness" ref="freshness2"/>
+    </bean>
+
+    <!--Chamomiles-->
+
+    <bean id="chamomile1" class="com.flowergarden.flowers.Chamomile">
+        <constructor-arg index="0" value="${chamomile1.petals}"/>
+        <constructor-arg index="1" value="${flower1.length}"/>
+        <constructor-arg index="2" value="${flower1.price}"/>
+        <constructor-arg index="3" ref="freshness1"/>
+    </bean>
+
+    <bean id="chamomile2" class="com.flowergarden.flowers.Chamomile">
+        <constructor-arg index="0" value="${chamomile2.petals}"/>
+        <constructor-arg index="1" value="${flower2.length}"/>
+        <constructor-arg index="2" value="${flower2.price}"/>
+        <constructor-arg index="3" ref="freshness2"/>
+    </bean>
+
+    <!--Roses-->
+
+    <bean id="rose1" class="com.flowergarden.flowers.Rose">
+        <constructor-arg name="spike" value="${rose.spike}"/>
+        <constructor-arg name="length" value="${flower3.length}"/>
+        <constructor-arg name="price" value="${flower3.price}"/>
+        <constructor-arg name="fresh" ref="freshness3"/>
+    </bean>
+
+    <!--Freshness-->
+
+    <bean id="freshness1" class="com.flowergarden.properties.FreshnessInteger">
+        <constructor-arg name="freshness" value="${freshness1.freshness}"/>
+    </bean>
+
+    <bean id="freshness2" class="com.flowergarden.properties.FreshnessInteger">
+        <constructor-arg name="freshness" value="${freshness2.freshness}"/>
+    </bean>
+
+    <bean id="freshness3" class="com.flowergarden.properties.FreshnessInteger">
+        <constructor-arg name="freshness" value="${freshness3.freshness}"/>
+    </bean>
+
+</beans>
