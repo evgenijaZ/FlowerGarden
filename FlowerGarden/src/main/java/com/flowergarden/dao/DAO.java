@@ -18,8 +18,8 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     Session session;
     DataSource dataSource;
-    private String tableName;
     String schemaName;
+    private String tableName;
     private String SELECT_ALL = "SELECT * FROM %s.%s";
     private String SELECT_BY_ID = "SELECT * FROM %s.%s WHERE %s = ?;";
     private String DELETE_BY_ID = "DELETE FROM %s.%s WHERE %s = ?;";
@@ -37,10 +37,22 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
 
     protected abstract Class <K> getKeyClass();
 
+    /**
+     * Returns field name - column name mapping.
+     * Id column name should be the last one.
+     *
+     * @return name mapping
+     */
     public abstract String[][] getNameMapping();
 
+    /**
+     * Makes query like as "UPDATE %s.%s SET %s=?, ... , %s=? WHERE %s=?"
+     * and fills with schema name, table name, column names.
+     * Arguments count depends on number of declared fields name mapping.
+     *
+     * @return `update by id` query
+     */
     private String getUpdateQuery() {
-        //"UPDATE %s.%s SET %s=?, ... %s=? WHERE %s=?"
         StringBuilder query = new StringBuilder("UPDATE %s.%s SET ");
         int colCount = getFieldCount() - 1;
         for (int i = 0; i < colCount; i++) {
@@ -51,19 +63,35 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return String.format(query.toString(), makeFormatArgs(colCount + 1));
     }
 
+    /**
+     * Fills the `insert by id` query with schema name, table name, column names
+     *
+     * @return `insert by id` query
+     */
     private String getInsertByIdQuery() {
         int colCount = getFieldCount();
         return String.format(makeInsertQuery(colCount), makeFormatArgs(colCount));
 
     }
 
+    /**
+     * Fills the `insert` query with schema name, table name, column names
+     *
+     * @return `insert` query
+     */
     private String getInsertQuery() {
         int colCount = getFieldCount() - 1;
         return String.format(makeInsertQuery(colCount), makeFormatArgs(colCount));
     }
 
+
+    /**
+     * Returns query like as "INSERT INTO %s.%s (%s, ... %s) VALUES (?, ... ?);".
+     * Arguments count depends on number of declared fields name mapping.
+     *
+     * @return insert query
+     */
     private String makeInsertQuery(int count) {
-        //"INSERT INTO %s.%s (%s, ... %s) VALUES (?, ... ?);";
         StringBuilder query = new StringBuilder("INSERT INTO %s.%s (");
         for (int i = 0; i < count; i++) {
             query.append("%s, ");
@@ -78,14 +106,29 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return query.toString();
     }
 
+    /**
+     * Makes `delete table_name` query and fills with schema name and table name
+     *
+     * @return `delete table_name` query
+     */
     private String getTruncateTable() {
         return String.format(TRUNCATE_TABLE, schemaName, tableName);
     }
 
+    /**
+     * Makes `select all` query and fills with schema name and table name
+     *
+     * @return `select all` query
+     */
     String getSelectAllQuery() {
         return String.format(SELECT_ALL, schemaName, tableName);
     }
 
+    /**
+     * Makes `select all` query for object that stores in two tables: parent and child(current) via `join`
+     *
+     * @return `select all` query
+     */
     String getSelectAllQueryWithParent(String[][] parentMapping, String parentTableName, String foreignKey) {
         StringBuilder selectAllQuery = new StringBuilder("SELECT ");
         String[][] currentMapping = this.getNameMapping();
@@ -110,11 +153,21 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return selectAllQuery.toString();
     }
 
+    /**
+     * Makes `select by id` query and fills with schema name and table name, name of id column
+     *
+     * @return `select by id` query
+     */
     private String getSelectByIdQuery() {
         String keyFieldName = getNameMapping()[getFieldCount() - 1][1];
         return String.format(SELECT_BY_ID, schemaName, tableName, keyFieldName);
     }
 
+    /**
+     * Makes `select by id` query and fills with schema name and table name, name of id column
+     *
+     * @return `select by id` query
+     */
     private String getDeleteByIdQuery() {
         String keyFieldName = getNameMapping()[getNameMapping().length - 1][1];
         return String.format(DELETE_BY_ID, schemaName, tableName, keyFieldName);
@@ -133,8 +186,10 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
                     entities.add((E) parsingSetResult);
             }
             session.closeStatement(statement);
-        } catch (SQLException | IllegalAccessException | NoSuchFieldException | InstantiationException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("Cannot execute 'select all' query: " + e.getMessage());
+        } catch (IllegalAccessException | NoSuchFieldException | InstantiationException e) {
+            System.err.println("Cannot get entity from result set: " + e.getMessage());
         }
         return entities;
     }
@@ -147,8 +202,10 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
             statement = prepareStatement(statement, entity);
             result = statement != null && statement.execute();
             session.closeStatement(statement);
-        } catch (SQLException | IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            System.err.println("Cannot execute 'update' query: " + e.getMessage());
+        } catch (SQLException | NoSuchFieldException e) {
+            System.err.println("Cannot prepare statement for 'update' query: " + e.getMessage());
         }
         return result;
     }
@@ -230,6 +287,9 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return result;
     }
 
+    /*
+     * Inserts both in current and in the parent table
+     */
     @SuppressWarnings("unchecked")
     boolean createWithParent(E item, String parentTableName, String[][] parentNameMapping, Class parentClass, Object parentItem, String foreignKey) {
         boolean generateKey;
@@ -322,14 +382,36 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return true;
     }
 
-    protected Object getEntityFromResultSet(ResultSet resultSet) throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
+    /**
+     * Returns object from result set
+     *
+     * @param resultSet result set
+     * @return result object ( object should be instance of E )
+     * @throws IllegalAccessException if cannot write into object`s field
+     * @throws InstantiationException if cannot create a new instance of target class
+     * @throws NoSuchFieldException   cannot found a field
+     * @throws SQLException           error with working with work set
+     */
+    private Object getEntityFromResultSet(ResultSet resultSet) throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
         Class <?> entityClass = this.getEntityClass();
         String[][] nameMapping = getNameMapping();
         return getEntityFromResultSet(resultSet, entityClass, nameMapping);
     }
 
-
-    protected Object getEntityFromResultSet(ResultSet resultSet, Class entityClass, String[][] nameMapping) throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
+    /**
+     * Returns object from result set
+     *
+     * @param resultSet   result set
+     * @param entityClass entity class
+     * @param nameMapping name mapping
+     * @return result object ( object should be instance of E )
+     * @throws IllegalAccessException if cannot write into object`s field
+     * @throws InstantiationException if cannot create a new instance of target class
+     * @throws NoSuchFieldException   cannot found a field
+     * @throws SQLException           error with working with work set
+     */
+    Object getEntityFromResultSet(ResultSet resultSet, Class entityClass, String[][] nameMapping)
+            throws IllegalAccessException, InstantiationException, NoSuchFieldException, SQLException {
         Object instance = entityClass.newInstance();
         for (String[] columnFieldPair : (nameMapping)) {
             String fieldName = columnFieldPair[0];
@@ -344,41 +426,50 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return instance;
     }
 
-    private void setFieldValue(Field field, Object instance, String value) throws IllegalAccessException {
+    /**
+     * Sets field value
+     */
+    private void setFieldValue(Field field, Object item, String value) throws IllegalAccessException {
         String fieldType = field.getType().getSimpleName();
         switch (fieldType) {
             case "String": {
-                field.set(instance, value);
+                field.set(item, value);
                 break;
             }
             case "int":
             case "Integer": {
-                field.setInt(instance, Integer.parseInt(value));
+                field.setInt(item, Integer.parseInt(value));
                 break;
             }
             case "Double":
             case "double":
             case "Float":
             case "float": {
-                field.setFloat(instance, Float.parseFloat(value));
+                field.setFloat(item, Float.parseFloat(value));
                 break;
             }
             case "boolean":
             case "Boolean": {
-                field.setBoolean(instance, Boolean.getBoolean(value));
+                field.setBoolean(item, Boolean.getBoolean(value));
                 break;
             }
             case "Freshness":
             case "FreshnessInteger":
-                field.set(instance, new FreshnessInteger(Integer.parseInt(value)));
+                field.set(item, new FreshnessInteger(Integer.parseInt(value)));
                 break;
         }
     }
 
+    /**
+     * Sets values in prepare statement
+     */
     private PreparedStatement prepareStatement(PreparedStatement statement, E item) throws SQLException, NoSuchFieldException, IllegalAccessException {
         return prepareStatement(statement, getEntityClass(), item, getNameMapping());
     }
 
+    /**
+     * Sets values in prepare statement
+     */
     private PreparedStatement prepareStatement(PreparedStatement statement, Class entityClass, Object item, String[][] nameMapping) throws SQLException, NoSuchFieldException, IllegalAccessException {
         int parametersCount = statement.getParameterMetaData().getParameterCount();
         for (int i = 0; i < parametersCount; i++) {
@@ -390,20 +481,35 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return statement;
     }
 
+    /**
+     * Returns field of target class by index
+     * @param index field index in name mapping
+     * @return field
+     * @throws NoSuchFieldException
+     */
     private Field getField(int index) throws NoSuchFieldException {
         return getField(index, getEntityClass(), getNameMapping());
 
     }
 
+    /**
+     * Returns field of target class by index in name mapping
+     */
     private Field getField(int index, Class entityClass, String[][] nameMapping) throws NoSuchFieldException {
         String fieldName = nameMapping[index][0];
         return entityClass.getDeclaredField(fieldName);
     }
 
+    /*
+     * Sets value in prepare statement by index
+     */
     private PreparedStatement prepareStatementWithOneValue(PreparedStatement statement, Object value, int fieldIndex) throws SQLException, NoSuchFieldException, IllegalAccessException {
         return prepareStatementWithOneValue(statement, getEntityClass(), getNameMapping(), value, fieldIndex);
     }
 
+    /*
+    * Sets value in prepare statement by index
+    */
     private PreparedStatement prepareStatementWithOneValue(PreparedStatement statement, Class entityClass, String[][] nameMapping, Object value, int fieldIndex) throws SQLException, NoSuchFieldException, IllegalAccessException {
         String fieldType = getFieldTypeName(fieldIndex, entityClass, nameMapping);
         if (statement.getParameterMetaData().getParameterCount() <= fieldIndex)
@@ -438,23 +544,55 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return statement;
     }
 
+    /**
+     * Get field count in name mapping
+     */
     private int getFieldCount() {
         return getNameMapping().length;
     }
 
+    /**
+     * Get field type by index in mane mapping
+     * @param index field index
+     * @return field type
+     */
     private String getFieldTypeName(int index) throws NoSuchFieldException {
         Field field = getField(index);
         field.setAccessible(true);
         return field.getType().getSimpleName();
     }
-
+    /**
+     * Get entity class field type by index in mane mapping
+     * @param index field index
+     * @param entityClass entity class
+     * @param nameMapping name mapping
+     * @return field type
+     */
     private String getFieldTypeName(int index, Class entityClass, String[][] nameMapping) throws NoSuchFieldException {
         Field field = getField(index, entityClass, nameMapping);
         field.setAccessible(true);
         return field.getType().getSimpleName();
     }
 
+    /**
+     * Make arguments for formatted queries
+     * @param count arguments count
+     * @return arguments as array
+     */
+    private Object[] makeFormatArgs(int count) {
+        String tableName = this.tableName;
+        Class entityClass = getEntityClass();
+        String[][] nameMapping = getNameMapping();
+        return makeFormatArgs(count, tableName, nameMapping);
+    }
 
+    /**
+     * Make arguments for formatted queries
+     * @param count arguments count
+     * @param tableName target table name
+     * @param nameMapping name mapping for target class
+     * @return arguments as array
+     */
     private Object[] makeFormatArgs(int count, String tableName, String[][] nameMapping) {
         List <String> args = new ArrayList <>();
         args.add(schemaName);
@@ -465,18 +603,17 @@ public abstract class DAO<E, K> implements InterfaceDAO <E, K> {
         return args.toArray();
     }
 
-    private Object[] makeFormatArgs(int count) {
-        String tableName = this.tableName;
-        Class entityClass = getEntityClass();
-        String[][] nameMapping = getNameMapping();
-        return makeFormatArgs(count, tableName, nameMapping);
-    }
-
+    /**
+     * delete all records from target table
+     */
     void truncateTable() {
         truncateTable(this.tableName);
     }
 
-    void truncateTable(String tableName) {
+    /**
+     * delete all records from table by name
+     */
+    private void truncateTable(String tableName) {
         Statement statement;
         try {
             statement = session.getStatement();
