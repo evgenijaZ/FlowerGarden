@@ -1,5 +1,6 @@
 package com.flowergarden.dao;
 
+import com.flowergarden.context.ApplicationContextDAO;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.properties.FreshnessInteger;
 import org.junit.After;
@@ -7,10 +8,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.List;
 
@@ -18,10 +21,11 @@ import java.util.List;
  * @author Yevheniia Zubrych on 19.03.2018.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:application-context.xml")
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 public class FlowerDAOTest {
-    @Autowired
-    ApplicationContext context;
+
+    private ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationContextDAO.class);
+
     private FlowerDAO dao;
 
     private GeneralFlower flower1;
@@ -44,7 +48,7 @@ public class FlowerDAOTest {
     }
 
     @Test
-    public void testGettingListOfFlowers() throws Exception {
+    public void testGettingListOfFlowers() {
         //Given
         dao.create(flower1);
         dao.create(flower2);
@@ -143,4 +147,7 @@ public class FlowerDAOTest {
         dao.truncateTable();
     }
 
+    @Configuration
+    public static class ContextConfiguration {
+    }
 }

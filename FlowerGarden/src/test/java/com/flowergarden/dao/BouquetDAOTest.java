@@ -1,7 +1,7 @@
 package com.flowergarden.dao;
 
-import com.flowergarden.ApplicationContextDAO;
 import com.flowergarden.bouquet.MarriedBouquet;
+import com.flowergarden.context.ApplicationContextDAO;
 import com.flowergarden.flowers.Chamomile;
 import com.flowergarden.flowers.Rose;
 import org.junit.After;
@@ -50,7 +50,7 @@ public class BouquetDAOTest {
     @Test
     public void testGettingListOfBouquets() {
         //Given
-        //dao.create(bouquet1);
+        dao.create(bouquet1);
         dao.create(bouquet2);
         dao.create(bouquet3);
 
