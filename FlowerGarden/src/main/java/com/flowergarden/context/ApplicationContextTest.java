@@ -1,4 +1,4 @@
-package com.flowergarden;
+package com.flowergarden.context;
 
 import com.flowergarden.bouquet.MarriedBouquet;
 import com.flowergarden.flowers.Chamomile;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
  * @author Yevheniia Zubrych on 25.03.2018.
  */
 @Configuration
-@PropertySource("classpath:bouquet.properties")
+@PropertySource("file:src/main/resources/bouquet.properties")
 public class ApplicationContextTest {
 
     @Value("${freshness1.freshness}")

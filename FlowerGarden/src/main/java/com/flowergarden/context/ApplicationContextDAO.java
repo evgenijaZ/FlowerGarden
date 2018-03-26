@@ -1,12 +1,7 @@
-package com.flowergarden;
+package com.flowergarden.context;
 
-import com.flowergarden.bouquet.MarriedBouquet;
 import com.flowergarden.dao.BouquetDAO;
 import com.flowergarden.dao.FlowerDAO;
-import com.flowergarden.flowers.Chamomile;
-import com.flowergarden.flowers.GeneralFlower;
-import com.flowergarden.flowers.Rose;
-import com.flowergarden.properties.FreshnessInteger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -20,12 +15,13 @@ import java.io.IOException;
  */
 @Configuration
 @Import(ApplicationContextTest.class)
-@PropertySource("classpath:db.properties")
+@PropertySource( "file:src/main/resources/db.properties")
 public class ApplicationContextDAO {
 
     @Value("${db.url}") String dbUrl;
     @Value("${db.name}") String dbName;
     @Value("${db.schema}") String dbSchema;
+    @Value("${db.driver}") String dbDriver;
 
     @Value("${db.tables.bouquet}") String bouquetTable;
     @Value("${db.tables.chamomile}") String chamomileTable;
@@ -45,7 +41,7 @@ public class ApplicationContextDAO {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setDriverClassName(dbDriver);
         dataSource.setUrl(url());
         return dataSource;
     }

@@ -1,6 +1,6 @@
 package com.flowergarden.run;
 
-import com.flowergarden.ApplicationContextDAO;
+import com.flowergarden.context.ApplicationContextDAO;
 import com.flowergarden.bouquet.MarriedBouquet;
 import com.flowergarden.dao.BouquetDAO;
 import com.flowergarden.flowers.Chamomile;
