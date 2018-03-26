@@ -1,19 +1,32 @@
 package com.flowergarden.dao;
 
+import com.flowergarden.context.ApplicationContextDAO;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.properties.FreshnessInteger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.List;
 
 /**
  * @author Yevheniia Zubrych on 19.03.2018.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 public class FlowerDAOTest {
-    private DAO <GeneralFlower, Integer> dao;
+
+    private ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationContextDAO.class);
+
+    private FlowerDAO dao;
 
     private GeneralFlower flower1;
     private GeneralFlower flower2;
@@ -22,20 +35,20 @@ public class FlowerDAOTest {
 
     @Before
     public void initDao() {
-        dao = new FlowerDAO("flowergarden", "main", "flower");
+        dao = (FlowerDAO) context.getBean("flowerDAO");
         dao.truncateTable();
     }
 
     @Before
     public void initFlowers() {
-        flower1 = new GeneralFlower(15, 16, new FreshnessInteger(5));
-        flower2 = new GeneralFlower(13.5f, 13, new FreshnessInteger(4));
-        flower3 = new GeneralFlower(14, 10, new FreshnessInteger(4));
-        flower4 = new GeneralFlower(14.3f, 15, new FreshnessInteger(6));
+        flower1 = (GeneralFlower) context.getBean("flower1");
+        flower2 = (GeneralFlower) context.getBean("flower2");
+        flower3 = (GeneralFlower) context.getBean("flower3");
+        flower4 = (GeneralFlower) context.getBean("flower4");
     }
 
     @Test
-    public void testGettingListOfFlowers() throws Exception {
+    public void testGettingListOfFlowers() {
         //Given
         dao.create(flower1);
         dao.create(flower2);
@@ -89,7 +102,7 @@ public class FlowerDAOTest {
         GeneralFlower actualFlower = dao.getByKey(id);
 
         //Then
-        Assert.assertEquals(flower1,actualFlower);
+        Assert.assertEquals(flower1, actualFlower);
     }
 
     @Test
@@ -125,8 +138,8 @@ public class FlowerDAOTest {
         dao.create(flower2);
 
         //Then
-        GeneralFlower actualFlower =  dao.getByKey(id);
-        Assert.assertEquals(flower2,actualFlower);
+        GeneralFlower actualFlower = dao.getByKey(id);
+        Assert.assertEquals(flower2, actualFlower);
     }
 
     @After
@@ -134,4 +147,7 @@ public class FlowerDAOTest {
         dao.truncateTable();
     }
 
+    @Configuration
+    public static class ContextConfiguration {
+    }
 }

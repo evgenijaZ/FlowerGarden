@@ -1,6 +1,10 @@
 package com.flowergarden.dao;
 
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
@@ -10,21 +14,21 @@ import java.sql.*;
  */
 class Session {
 
-    private final String URL = "jdbc:sqlite:";
-    private String dbName;
+    DataSource dataSource;
     private Connection connection;
 
 
-    Session(String dbName) {
-        this.dbName = dbName;
+    Session(DataSource dataSource) {
+        this.dataSource=dataSource;
         connection = openConnection();
+        if(connection == null)
+            System.out.println("null");
     }
 
-     Connection openConnection() {
-        File file = new File(dbName+".db");
+     private Connection openConnection() {
         try {
-            return DriverManager.getConnection(URL + file.getCanonicalFile().toURI());
-        } catch (SQLException | IOException e) {
+            return dataSource.getConnection();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

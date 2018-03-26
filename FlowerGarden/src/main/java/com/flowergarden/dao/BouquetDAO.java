@@ -5,6 +5,7 @@ import com.flowergarden.flowers.Chamomile;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.flowers.Rose;
 
+import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,8 +18,8 @@ public class BouquetDAO extends DAO <MarriedBouquet, Integer> {
 
     private String[][] nameMapping = {{"assemblePrice", "assemble_price"}, {"id", "id"}};
 
-    public BouquetDAO(String dbName, String schemaName, String tableName) {
-        super(dbName, schemaName, tableName);
+    public BouquetDAO(DataSource dataSource, String schemaName, String tableName) {
+        super(dataSource, schemaName, tableName);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BouquetDAO extends DAO <MarriedBouquet, Integer> {
     public boolean create(MarriedBouquet entity) {
         boolean result = super.create(entity);
         List <GeneralFlower> flowers = (List <GeneralFlower>) entity.getFlowers();
-        if (flowers == null) return result;
+        if (flowers == null || flowers.size() == 0) return result;
 
         ChamomileDAO chamomileDAO = null;
         RoseDAO roseDAO = null;
@@ -77,15 +78,15 @@ public class BouquetDAO extends DAO <MarriedBouquet, Integer> {
         for (GeneralFlower flower : flowers) {
             if (flower instanceof Chamomile) {
                 if (chamomileDAO == null)
-                    chamomileDAO = new ChamomileDAO(this.dbName, this.schemaName, "flower", "chamomile");
+                    chamomileDAO = new ChamomileDAO(this.dataSource, this.schemaName, "flower", "chamomile");
                 chamomileDAO.create(flower);
             } else if (flower instanceof Rose) {
                 if (roseDAO == null)
-                    roseDAO = new RoseDAO(this.dbName, this.schemaName, "flower", "rose");
+                    roseDAO = new RoseDAO(this.dataSource, this.schemaName, "flower", "rose");
                 roseDAO.create(flower);
             } else {
                 if (flowerDAO == null)
-                    flowerDAO = new FlowerDAO(this.dbName, this.schemaName, "flower");
+                    flowerDAO = new FlowerDAO(this.dataSource, this.schemaName, "flower");
                 flowerDAO.create(flower);
             }
         }
@@ -109,7 +110,7 @@ public class BouquetDAO extends DAO <MarriedBouquet, Integer> {
             while (chamomileResultSet.next()) {
                 GeneralFlower flower = (GeneralFlower) getEntityFromResultSet(chamomileResultSet, GeneralFlower.class, flowerMapping);
                 Chamomile resultChamomile = (Chamomile) getEntityFromResultSet(chamomileResultSet, Chamomile.class, chamomileMapping);
-                if (resultChamomile != null) {
+                if (resultChamomile != null && flower != null) {
                     resultChamomile.setPrice(flower.getPrice());
                     resultChamomile.setLength(flower.getLength());
                     resultChamomile.setFreshness(flower.getFreshness());
