@@ -1,7 +1,12 @@
 package com.flowergarden.bouquet;
 
+import com.flowergarden.dao.json.FlowerAdapter;
 import com.flowergarden.flowers.GeneralFlower;
+import com.sun.xml.internal.txw2.annotation.XmlElement;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,9 +15,11 @@ import java.util.List;
 /**
  * @author Yevheniia Zubrych on 12.03.2018.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class GeneralBouquet implements Bouquet <GeneralFlower> {
+    @XmlJavaTypeAdapter(FlowerAdapter.class)
     private List <GeneralFlower> flowerList = new ArrayList <>();
-    int id;
+    private int id;
     @Override
     public float getPrice() {
         float price = 0;

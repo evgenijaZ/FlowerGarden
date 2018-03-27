@@ -1,0 +1,35 @@
+{
+  "marriedBouquet": {
+    "flowerList": [
+      {
+        "@petals": 24,
+        "freshness": {
+          "freshness": 6
+        },
+        "price": 12,
+        "length": 24,
+        "id": -1
+      },
+      {
+        "@petals": 26,
+        "freshness": {
+          "freshness": 5
+        },
+        "price": 50,
+        "length": 34,
+        "id": -1
+      },
+      {
+        "@spike": false,
+        "freshness": {
+          "freshness": 6
+        },
+        "price": 34,
+        "length": 35,
+        "id": -1
+      }
+    ],
+    "id": 4,
+    "assemblePrice": 100
+  }
+}

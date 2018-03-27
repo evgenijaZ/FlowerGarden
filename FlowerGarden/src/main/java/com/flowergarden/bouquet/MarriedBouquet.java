@@ -1,12 +1,16 @@
 package com.flowergarden.bouquet;
 
-import com.flowergarden.flowers.GeneralFlower;
-
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class MarriedBouquet extends GeneralBouquet {
 
     private int id;
+
     private float assemblePrice;
 
     public MarriedBouquet() {
@@ -19,7 +23,7 @@ public class MarriedBouquet extends GeneralBouquet {
         this.id = -1;
     }
 
-    public MarriedBouquet(int id, float assemblePrice){
+    public MarriedBouquet(int id, float assemblePrice) {
         this.id = id;
         this.assemblePrice = assemblePrice;
     }
