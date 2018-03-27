@@ -6,6 +6,7 @@ import com.flowergarden.flowers.Rose;
 import com.flowergarden.properties.FreshnessInteger;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
@@ -43,9 +44,9 @@ public class FlowerAdapter extends XmlAdapter <FlowerAdapter.AdaptedFlower, Gene
     }
 
     public static class AdaptedFlower extends GeneralFlower {
-        @XmlAttribute
+        @XmlElement
         Boolean spike;
-        @XmlAttribute
+        @XmlElement
         Integer petals;
 
         AdaptedFlower(){}
