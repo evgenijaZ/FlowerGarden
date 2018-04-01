@@ -1,16 +1,16 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Zhenya
-  Date: 01.04.2018
-  Time: 21:31
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>$Title$</title>
+    <title>Home</title>
 </head>
 <body>
-$END$
+<form id="getByIdForm"  action="/bouquet" method="get">
+    Please enter a bouquet id <br>
+    <label>
+        <input type="text" name="id" size="20px">
+    </label>
+    <input type="submit" value="submit">
+</form>
+
 </body>
 </html>
