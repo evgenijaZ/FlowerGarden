@@ -42,7 +42,7 @@ public class Run {
 
         System.out.println("Price of bouquet from data base: " + bouquetFromDB.getPrice());
 
-        JsonDAO jsonDAO = new JsonDAO("bouquet.json", MarriedBouquet.class);
+        JsonDAO jsonDAO = (JsonDAO) context.getBean("jsonDAO");
         jsonDAO.create(bouquetFromDB);
 
         MarriedBouquet bouquetFromJSON = jsonDAO.getBouquet();

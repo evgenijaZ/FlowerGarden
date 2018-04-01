@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
  * @author Yevheniia Zubrych on 25.03.2018.
  */
 @Configuration
-@PropertySource("file:src/main/resources/bouquet.properties")
+@PropertySource("classpath:bouquet.properties")
 public class ApplicationContextTest {
 
     @Value("${freshness1.freshness}")
