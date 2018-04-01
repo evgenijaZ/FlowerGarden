@@ -1,4 +1,4 @@
-<%@ page import="edu.kpi.jee.labs.entities.Place" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -6,18 +6,21 @@
 </head>
 <body>
 <%
-    Place place = (Place) request.getAttribute("place");
-    if (place != null) {
+    List <String> result = (List <String>) request.getAttribute("result");
+    if (result != null) {
+        for (String line : result) {
 %>
 <h5>
-    <%=place.toString()%>
+    <%=line%>
 </h5>
 <%
-    }else {%>
-<h>There is no places with id <%=request.getParameter("place_id")%> </h>
+    }
+} else {
+%>
+<h>There is no bouquets with id <%=request.getParameter("id")%></h>
 <%
     }
 %>
-<a href="/index">BACK</a>
+<a href="/">BACK</a>
 </body>
 </html>
