@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class FlowerAdapter extends XmlAdapter <FlowerAdapter.AdaptedFlower, GeneralFlower> {
 
-
     @Override
     public GeneralFlower unmarshal(AdaptedFlower v) {
         if (v == null) return null;
@@ -48,7 +47,7 @@ public class FlowerAdapter extends XmlAdapter <FlowerAdapter.AdaptedFlower, Gene
         return adaptedFlower;
     }
 
-    public static class AdaptedFlower extends GeneralFlower {
+    static class AdaptedFlower extends GeneralFlower {
         @XmlElement
         Boolean spike;
         @XmlElement
