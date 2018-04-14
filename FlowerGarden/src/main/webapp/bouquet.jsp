@@ -8,7 +8,10 @@
 <%
     List <String> result = (List <String>) request.getAttribute("result");
     if (result != null) {
-        for (String line : result) {
+%>
+<h4>Bouquet with id <%=request.getParameter("id")%>
+</h4><%
+    for (String line : result) {
 %>
 <h5>
     <%=line%>
@@ -17,7 +20,8 @@
     }
 } else {
 %>
-<h>There is no bouquets with id <%=request.getParameter("id")%></h>
+<h4>There is no bouquets with id <%=request.getParameter("id")%>
+</h4>
 <%
     }
 %>
