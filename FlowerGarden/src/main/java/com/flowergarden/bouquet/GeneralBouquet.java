@@ -2,7 +2,6 @@ package com.flowergarden.bouquet;
 
 import com.flowergarden.dao.json.FlowerAdapter;
 import com.flowergarden.flowers.GeneralFlower;
-import com.sun.xml.internal.txw2.annotation.XmlElement;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,6 +19,7 @@ public abstract class GeneralBouquet implements Bouquet <GeneralFlower> {
     @XmlJavaTypeAdapter(FlowerAdapter.class)
     private List <GeneralFlower> flowerList = new ArrayList <>();
     private int id;
+
     @Override
     public float getPrice() {
         float price = 0;
