@@ -31,25 +31,21 @@ public class ApplicationContextDAO {
     @Value("${db.tables.flower}") String flowerTable;
 
     @Bean
-    @Scope(value="session")
     public BouquetDAO bouquetDAO(){
         return new BouquetDAO(dataSource(), dbSchema, bouquetTable);
     }
 
     @Bean
-    @Scope(value="session")
     public FlowerDAO flowerDAO(){
         return new FlowerDAO(dataSource(), dbSchema, flowerTable);
     }
 
 
     @Bean
-    @Scope(value="session")
     public JsonDAO jsonDAO(){
         return new JsonDAO("bouquet.json", MarriedBouquet.class);
     }
 
-    @Bean@Scope(value="session")
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(dbDriver);
@@ -58,7 +54,6 @@ public class ApplicationContextDAO {
     }
 
     @Bean
-    @Scope(value="session")
     public String url() {
         File dbFile = new File(dbName);
         try {

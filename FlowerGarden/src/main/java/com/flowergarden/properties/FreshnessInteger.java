@@ -23,6 +23,10 @@ public class FreshnessInteger implements Freshness <Integer>, Comparable <Freshn
         return freshness;
     }
 
+    public void setFreshness(Integer freshness) {
+        this.freshness = freshness;
+    }
+
     @Override
     public int compareTo(FreshnessInteger o) {
         if (freshness > o.getFreshness()) return 1;
