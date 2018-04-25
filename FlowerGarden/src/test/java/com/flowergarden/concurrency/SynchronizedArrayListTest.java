@@ -1,4 +1,4 @@
-package com.flowergarden.collections;
+package com.flowergarden.concurrency;
 
 import org.junit.Test;
 
@@ -12,16 +12,16 @@ public class SynchronizedArrayListTest {
 
     @Test
     public void testSize() throws InterruptedException {
-        int threadCount=100;
-       Thread[] threads = new Thread[threadCount];
-       for (int i = 0; i<threadCount;i++){
-           threads[i] = new Thread(new TestThread("T"+i));
-           threads[i].start();
-       }
-        for (int i = 0; i<threadCount;i++){
+        int threadCount = 100;
+        Thread[] threads = new Thread[threadCount];
+        for (int i = 0; i < threadCount; i++) {
+            threads[i] = new Thread(new TestThread("T" + i));
+            threads[i].start();
+        }
+        for (int i = 0; i < threadCount; i++) {
             threads[i].join();
         }
-        assertEquals(threadCount*100, list.size());
+        assertEquals(threadCount * 100, list.size());
     }
 
     class TestThread implements Runnable {
@@ -33,7 +33,7 @@ public class SynchronizedArrayListTest {
 
         @Override
         public void run() {
-            for (int i=0;i<100;i++) {
+            for (int i = 0; i < 100; i++) {
                 list.add(i);
                 Thread.yield();
             }
