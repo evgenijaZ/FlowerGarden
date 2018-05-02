@@ -51,5 +51,10 @@ public class MarriedBouquet implements Bouquet<GeneralFlower>, Cloneable {
 		assemblePrice = price;
 	}
 
-	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		MarriedBouquet clone  = (MarriedBouquet) super.clone();
+		clone.flowerList = new ArrayList<>(this.flowerList);
+		return clone;
+	}
 }
