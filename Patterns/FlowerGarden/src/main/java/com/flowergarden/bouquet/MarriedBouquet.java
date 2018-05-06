@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.flowergarden.flowers.GeneralFlower;
+import com.flowergarden.iterator.Container;
+import com.flowergarden.iterator.Iterator;
 
-public class MarriedBouquet implements Bouquet<GeneralFlower>, Cloneable {
+public class MarriedBouquet implements Bouquet<GeneralFlower>, Cloneable, Container {
 
 	private float assemblePrice = 120;
 	private List<GeneralFlower> flowerList = new ArrayList<>();
@@ -27,7 +29,7 @@ public class MarriedBouquet implements Bouquet<GeneralFlower>, Cloneable {
 	}
 
 	@Override
-	public Collection<GeneralFlower> searchFlowersByLenght(int start, int end) {
+	public Collection<GeneralFlower> searchFlowersByLength(int start, int end) {
 		List<GeneralFlower> searchResult = new ArrayList<GeneralFlower>();
 		for (GeneralFlower flower : flowerList) {
 			if (flower.getLength() >= start && flower.getLength() <= end) {
@@ -56,5 +58,26 @@ public class MarriedBouquet implements Bouquet<GeneralFlower>, Cloneable {
 		MarriedBouquet clone  = (MarriedBouquet) super.clone();
 		clone.flowerList = new ArrayList<>(this.flowerList);
 		return clone;
+	}
+
+	@Override
+	public Iterator getIterator() {
+		return new FlowerIterator();
+	}
+
+	private class FlowerIterator implements Iterator {
+		int index;
+		@Override
+		public boolean hasNext() {
+			return index < flowerList.size();
+		}
+
+		@Override
+		public Object next() {
+			if(this.hasNext()){
+				return flowerList.get(index++);
+			}
+			return null;
+		}
 	}
 }
